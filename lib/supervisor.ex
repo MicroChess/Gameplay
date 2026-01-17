@@ -1,5 +1,5 @@
 defmodule Dero.Supervisor do
-     use Supervisor
+    use Supervisor
 
     def start_link(init_arg) do
         Supervisor.start_link(__MODULE__, init_arg, name: __MODULE__)
