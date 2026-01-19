@@ -32,7 +32,7 @@ spec:
         - name: RELEASE_DISTRIBUTION
           value: "name"
         - name: RELEASE_NODE
-          value: "dero@$(POD_IP)"
+          value: "backend@$(POD_IP)"
         ports:
         - containerPort: 80
           name: http
