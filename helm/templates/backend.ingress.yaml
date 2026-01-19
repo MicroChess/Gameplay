@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: clusterchess-backend-ig
+  namespace: clusterchess-backend
+spec:
+  entryPoints:
+    - websecure
+  tls:
+    secretName: clusterchess-backend-tls
+  routes:
+    - match: Host(`api.fdero.com`)
+      kind: Rule
+      middlewares:
+        - name: backend-http-https-redirect
+      services:
+        - name: clusterchess-backend-sv
+          port: 80

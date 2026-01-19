@@ -4,16 +4,36 @@ defmodule Dero.Main.Startup do
     defp cluster do
         [
             dero_cluster: [
-                strategy: Cluster.Strategy.Epmd,
-                config: [
-                    hosts: [
-                        :"a@127.0.0.1",
-                        :"b@127.0.0.1",
-                        :"c@127.0.0.1"
-                    ]
-                ]
+                strategy: cluster_strategy(),
+                config: cluster_config()
             ]
         ]
+    end
+
+    defp cluster_strategy do
+        case Mix.env() do
+            :dev -> Cluster.Strategy.LocalEpmd
+            _ -> Cluster.Strategy.Kubernetes.DNS
+        end
+    end
+
+    defp cluster_config do
+        case Mix.env() do
+            :dev -> []
+            _ ->
+                [
+                    service: "dero-cluster",
+                    namespace: "clusterchess-backend",
+                    polling_interval: 10_000
+                ]
+        end
+    end
+
+    defp ports do
+        case Mix.env() do
+            :dev -> [port: 4000]
+            _ -> [port: 80, ip: {0, 0, 0, 0}]
+        end
     end
 
     defp router do
@@ -26,7 +46,9 @@ defmodule Dero.Main.Startup do
 
     defp children do
         [
-            {Cluster.Supervisor, [cluster(), [name: :cluster_nodes_supervisor]]},
+            {Cluster.Supervisor, [
+                cluster(), [name: :cluster_nodes_supervisor]
+            ]},
             {Horde.Registry, [name: :cluster_registry, keys: :unique, members: :auto]},
             {Horde.DynamicSupervisor, [
                 name: :cluster_processes_supervisor,
@@ -35,7 +57,9 @@ defmodule Dero.Main.Startup do
             ]},
             %{
                 id: :http,
-                start: {:cowboy, :start_clear, [:http, [port: 4000], %{env: %{dispatch: router()}}]}
+                start: {:cowboy, :start_clear, [
+                    :http, ports(), %{env: %{dispatch: router()}}
+                ]}
             }
         ]
     end

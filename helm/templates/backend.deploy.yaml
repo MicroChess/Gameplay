@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterchess-backend-dp
+  namespace: clusterchess-backend
+spec:
+  replicas: {{ .Values.replicas.min }}
+  selector:
+    matchLabels:
+      app: clusterchess-backend
+  template:
+    metadata:
+      labels:
+        app: clusterchess-backend
+    spec:
+      containers:
+      - name: backend
+        image: "{{ .Values.image.registry }}/{{ .Values.image.repo }}:{{ .Values.image.tag }}"
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        ports:
+        - containerPort: 80
+          name: http
+        - containerPort: 4369
+          name: epmd
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}

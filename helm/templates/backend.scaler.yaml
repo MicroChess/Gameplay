@@ -1,0 +1,15 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: clusterchess-backend-scaler
+  namespace: clusterchess-backend
+spec:
+  scaleTargetRef:
+    name: clusterchess-backend-dp
+  minReplicaCount: {{ .Values.replicas.min }}
+  maxReplicaCount: {{ .Values.replicas.max }}
+  triggers:
+    - type: cpu
+      metricType: Utilization
+      metadata:
+        value: "70"

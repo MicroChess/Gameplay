@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: clusterchess-backend-cert
+  namespace: clusterchess-backend
+spec:
+  secretName: clusterchess-backend-tls
+  issuerRef:
+    name: certmanager-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - api.clusterchess.fdero.com
