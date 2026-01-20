@@ -9,7 +9,7 @@ spec:
   tls:
     secretName: clusterchess-backend-tls
   routes:
-    - match: Host(`api.fdero.com`)
+    - match: Host(`api.clusterchess.fdero.com`)
       kind: Rule
       middlewares:
         - name: backend-http-https-redirect
