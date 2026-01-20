@@ -40,7 +40,9 @@ ENV port=80
 ENV strategy="kubernetes"
 
 ENV MIX_ENV=prod
+ENV RELEASE_DISTRIBUTION=name
+ENV ERL_DIST_PORT=9000
 
-EXPOSE 80 4369
+EXPOSE 80 4369 9000
 
 CMD ["bin/dero", "start"]
