@@ -13,6 +13,7 @@ spec:
       kind: Rule
       middlewares:
         - name: backend-http-https-redirect
+        - name: clusterchess-backend-session
       services:
         - name: clusterchess-backend-sv
           port: 80
