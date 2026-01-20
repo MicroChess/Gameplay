@@ -13,7 +13,12 @@ spec:
       kind: Rule
       middlewares:
         - name: backend-http-https-redirect
-        - name: clusterchess-backend-session
       services:
         - name: clusterchess-backend-sv
           port: 80
+          sticky:
+            cookie:
+              name: clusterchess-backend-sticky
+              secure: true
+              httpOnly: true
+              sameSite: lax
