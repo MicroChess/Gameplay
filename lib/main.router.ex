@@ -1,5 +1,6 @@
 defmodule ClusterChess.Main.Router do
     use Plug.Router
+
     alias Plug.Conn
     alias ClusterChess.Main.Sockets
     alias ClusterChess.Auth.Validation
@@ -7,12 +8,29 @@ defmodule ClusterChess.Main.Router do
     plug :match
     plug :dispatch
 
-    get "/games" do
-        handler = {Sockets, %{}, []}
-        Conn.upgrade_adapter(conn, :websocket, handler)
+    get "/games", do: authorize_before(conn, upgrade_to_socket(Sockets))
+    match _, do: send_resp(conn, 404, "Endpoint Not found in #{__MODULE__}")
+
+    def authorize_before(conn, callback) do
+        conn = Plug.Conn.fetch_query_params(conn)
+        header = Plug.Conn.get_req_header(conn, "authorization") |> List.first()
+        token = conn.query_params["token"] || header || "Guest"
+        case Validation.validate_token(token) do
+            {:ok, claims} -> callback.(conn, claims)
+            {:error, reason} -> send_resp(
+                conn, 401, Jason.encode!(%{
+                    message: "Unauthorized",
+                    reason: reason
+                })
+            )
+        end
     end
 
-    match _ do
-        send_resp(conn, 404, "Not found")
+    def upgrade_to_socket(type) do
+        fn conn, claims ->
+            Conn.upgrade_adapter(
+                conn, :websocket, {type, claims, []}
+            )
+        end
     end
 end
