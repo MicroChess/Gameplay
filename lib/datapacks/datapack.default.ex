@@ -4,17 +4,16 @@ defmodule ClusterChess.Datapack.Default do
             @behaviour ClusterChess.Datapack.Behaviour
 
             @impl ClusterChess.Datapack.Behaviour
-            def encode(struct) do
-                Jason.encode!(struct)
+            def enforce(data) do
+                module = unquote(__MODULE__)
+                values = struct(module, data) |> Map.values()
+                not_nil? = fn v -> !is_nil(v) end
+                if Enum.all?(values, not_nil?),
+                    do: {:ok, struct(module, data)},
+                    else: {:error, "Invalid datapack"}
             end
 
-            @impl ClusterChess.Datapack.Behaviour
-            def decode(json) do
-                decoded = Jason.decode!(json)
-                struct(__MODULE__, decoded)
-            end
-
-            defoverridable encode: 1, decode: 1
+            defoverridable enforce: 1
         end
     end
 end

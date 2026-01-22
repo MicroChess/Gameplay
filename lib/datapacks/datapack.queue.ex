@@ -9,26 +9,18 @@ defmodule ClusterChess.Datapacks.Queue do
         :rating,
         :preferred_color,
         :required_color,
+        :ranked,
         :timeformat,
         :increment
     ]
 
     @impl Behaviour
-    def enforce(data) do
-        values = struct(__MODULE__, data) |> Map.values()
-        if Enum.all?(values, fn v -> !is_nil(v) end) do
-            {:ok, struct(__MODULE__, data)}
-        else
-            {:error, "Invalid datapack"}
-        end
-    end
-
-    @impl Behaviour
     def getkey(self) do
         with {:ok, timeformat} <- Map.fetch(self, :timeformat),
-             {:ok, increment}  <- Map.fetch(self, :increment)
+             {:ok, increment}  <- Map.fetch(self, :increment),
+             {:ok, ranked}     <- Map.fetch(self, :ranked)
         do
-            {:ok, "#{timeformat}+#{increment}"}
+            {:ok, "#{ranked}-#{timeformat}+#{increment}"}
         else
             _ -> {:error, "Missing key fields"}
         end
