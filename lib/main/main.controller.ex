@@ -14,7 +14,7 @@ defmodule ClusterChess.Main.Controller do
     def mailbox(name) do
         case Horde.Registry.lookup(:cluster_registry, name) do
             [{pid, _}] -> :erlang.process_info(pid, :message_queue_len)
-            [] -> {:error, :not_found}
+            [] -> {:error, "not_found"}
         end
     end
 
