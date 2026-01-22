@@ -48,6 +48,8 @@ defmodule ClusterChess.Sockets.Default do
                 IO.puts("------------------------------------------")
                 {:ok, state}
             end
+
+            defoverridable handle_info: 2, handle_in: 2, init: 1
         end
     end
 end
