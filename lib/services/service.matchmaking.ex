@@ -1,9 +1,10 @@
 defmodule ClusterChess.Play.Queue do
+
     use GenServer
 
     def start_link(name) do
         GenServer.start_link(__MODULE__, [], name:
-            {:via, Horde.Registry, {:cluster_registry, name}})
+            {:via, Horde.Registry, {:matchmaking_registry, name}})
     end
 
     @impl GenServer

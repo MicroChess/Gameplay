@@ -1,14 +1,15 @@
 defmodule ClusterChess.Main.Router do
+
     use Plug.Router
 
     alias Plug.Conn
-    alias ClusterChess.Main.Sockets
-    alias ClusterChess.Auth.Validation
+    alias ClusterChess.Sockets.Matchmaking
+    alias ClusterChess.Main.Validation
 
     plug :match
     plug :dispatch
 
-    get "/games", do: authorize_before(conn, upgrade_to_socket(Sockets))
+    get "/ws/queue", do: authorize_before(conn, upgrade_to_socket(Matchmaking))
     match _, do: send_resp(conn, 404, "Endpoint Not found in #{__MODULE__}")
 
     def authorize_before(conn, callback) do
