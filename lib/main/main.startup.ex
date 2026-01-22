@@ -14,7 +14,12 @@ defmodule ClusterChess.Main.Startup do
                 [name: :cluster_nodes_supervisor]
             ]},
             {Horde.Registry, [
-                name: :cluster_registry,
+                name: :matchmaking_registry,
+                keys: :unique,
+                members: :auto
+            ]},
+            {Horde.Registry, [
+                name: :gameplay_registry,
                 keys: :unique,
                 members: :auto
             ]},
@@ -25,8 +30,8 @@ defmodule ClusterChess.Main.Startup do
             ]},
             {Bandit, [
                 port: String.to_integer(System.get_env("port", "4000")),
-                ip: {0, 0, 0, 0},
-                plug: ClusterChess.Main.Router
+                plug: ClusterChess.Main.Router,
+                ip: {0, 0, 0, 0}
             ]}
         ]
     end
