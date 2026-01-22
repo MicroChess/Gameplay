@@ -20,7 +20,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
              {:ok, req}  <- Queue.enforce(data),
              {:ok, key}  <- Queue.getkey(req)
         do
-            Commons.delegate(:matchmaking_registry, Matchmaking, key, req)
+            Commons.delegate(Matchmaking, key, req)
             {:ok, state, %{"msg" => "#{opcode}.ack"}}
         else
             {:error, reason} -> {:error, state, reason}

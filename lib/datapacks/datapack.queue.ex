@@ -4,7 +4,6 @@ defmodule ClusterChess.Datapacks.Queue do
 
     @derive Jason.Encoder
     defstruct [
-        :uid,
         :rating,
         :preferred_color,
         :required_color,
