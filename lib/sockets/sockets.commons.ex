@@ -4,7 +4,7 @@ defmodule ClusterChess.Sockets.Commons do
 
     def parse(decoded, _module) do
         with {:ok, authdata} <- Validation.validate_token(decoded["token"]),
-             true            <- authdata.uid == decoded["datapack"]["uid"]
+             true <- authdata.uid == decoded["datapack"]["uid"]
         do
                 {:ok, decoded["datapack"]}
         else
