@@ -2,10 +2,10 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
     use ExUnit.Case
 
     alias ClusterChess.Sockets.Matchmaking
-    alias ClusterChess.Datapacks.Queue
 
     test "Join Matchmaking Queue" do
         msg = %{
+            "type" => "queue.join",
             "token" => "Guest",
             "rating" => "1500",
             "preferred_color" => "white",
@@ -14,7 +14,8 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
             "minutes" => "5",
             "increment" => "0"
         }
-        result = Matchmaking.process("queue.join", msg, %{})
-        assert result == {:ok, %{}, %{"msg" => "queue.join.ack"}}
+        result = Matchmaking.handle_in({Jason.encode!(msg), [opcode: :text]}, %{})
+        assert {:reply, :ok, {:text, frame}, _state} = result
+        IO.inspect(frame)
     end
 end

@@ -3,35 +3,33 @@ defmodule ClusterChess.Sockets.Matchmaking do
     use ClusterChess.Sockets.Default
 
     alias ClusterChess.Main.Validation
-    alias ClusterChess.Sockets.Behaviour
     alias ClusterChess.Sockets.Commons
     alias ClusterChess.Services.Matchmaking
     alias ClusterChess.Datapacks.Queue
 
-    @opcodes ["queue.join", "queue.monitor", "queue.leave"]
+    @message_types ["queue.join", "queue.monitor", "queue.leave"]
+
+    @impl WebSock
+    def handle_in({message, [opcode: protocol]}, state) do
+        with {:ok, plain} <- Commons.decode(message, protocol),
+             {:ok, token} <- Map.fetch(plain, "token"),
+             {:ok, mtype} <- Map.fetch(plain, "type"),
+             {:ok, _indx} <- Enum.find_index(@message_types, &(&1 == mtype)),
+             {:ok, _auth} <- Validation.validate_token(token),
+             {:ok, queue} <- Queue.enforce(plain),
+             {:ok, mmqid} <- Queue.id(queue),
+             {:ok, _resp} <- Commons.delegate(Matchmaking, mmqid, queue)
+        do
+            Commons.encode!(%{ "msg" => "#{mtype}.ack" }, protocol)
+                |> Commons.resp(protocol, state)
+        else
+            {:error, reason} -> Commons.error(reason, protocol, state)
+            _ -> Commons.error("Invalid message format", protocol, state)
+        end
+    end
 
     @impl WebSock
     def terminate(_reason, _state) do
         :ok
     end
-
-    @impl Behaviour
-    def process(opcode, msg, state) when opcode in @opcodes do
-        IO.inspect(msg)
-        IO.inspect(Queue.enforce(msg))
-        with {:ok, token} <- Map.fetch(msg, "token"),
-             {:ok, _auth} <- Validation.validate_token(token),
-             {:ok, queue} <- Queue.enforce(msg),
-             {:ok, mmqid} <- Queue.id(queue)
-        do
-            Commons.delegate(Matchmaking, mmqid, queue)
-            {:ok, state, %{"msg" => "#{opcode}.ack"}}
-        else
-            {:error, reason} -> {:error, state, reason}
-        end
-    end
-
-    @impl Behaviour
-    def process(opcode, _, state),
-        do: {:error, state, "Unsupported operation: #{opcode}"}
 end
