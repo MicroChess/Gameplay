@@ -14,9 +14,6 @@ defmodule ClusterChess.Datapacks.Queue do
         :increment
     ]
 
-    defp ranked_2str(true),  do: "ranked"
-    defp ranked_2str(false), do: "unranked"
-
     @impl Behaviour
     def id(self) do
         with {:ok, minutes}   <- Map.fetch(self, :minutes),
@@ -28,4 +25,7 @@ defmodule ClusterChess.Datapacks.Queue do
             _ -> {:error, "Missing key fields"}
         end
     end
+
+    defp ranked_2str(true),  do: "ranked"
+    defp ranked_2str(false), do: "unranked"
 end
