@@ -1,5 +1,4 @@
 defmodule ClusterChess.Datapacks.Behaviour do
-
     @type outcome()
         :: {:ok, struct()}
         |  {:error, String.t()}

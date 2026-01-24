@@ -19,9 +19,9 @@ defmodule ClusterChess.Datapacks.Queue do
 
     @impl Behaviour
     def id(self) do
-        with {:ok, minutes}   <- Map.fetch(self, "minutes"),
-             {:ok, increment} <- Map.fetch(self, "increment"),
-             {:ok, ranked}    <- Map.fetch(self, "ranked")
+        with {:ok, minutes}   <- Map.fetch(self, :minutes),
+             {:ok, increment} <- Map.fetch(self, :increment),
+             {:ok, ranked}    <- Map.fetch(self, :ranked)
         do
             {:ok, "#{ranked_2str(ranked)}-#{minutes}+#{increment}"}
         else
