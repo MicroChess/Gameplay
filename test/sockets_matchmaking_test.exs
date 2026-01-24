@@ -14,8 +14,9 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
             "minutes" => "5",
             "increment" => "0"
         }
-        result = Matchmaking.handle_in({Jason.encode!(msg), [opcode: :text]}, %{})
-        assert {:reply, :ok, {:text, frame}, _state} = result
-        IO.inspect(frame)
+        txt = Jason.encode!(msg)
+        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        assert {:reply, :ok, {:text, reply}, _state} = result
+        IO.inspect(reply)
     end
 end
