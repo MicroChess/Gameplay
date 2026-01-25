@@ -27,12 +27,11 @@ defmodule ClusterChess.Sockets.Commons do
     def encode!(data, :text),    do: Jason.encode!(data)
     def encode!(data, :binary),  do: Msgpax.pack!(data)
 
-    def resp(msg, opcode, state \\ %{}),
-        do: {:reply, :ok, {opcode, msg}, state}
+    def resp(msg, protocol, state \\ %{}),
+        do: {:reply, :ok, {protocol, msg}, state}
 
-    def error(reason, opcode, state \\ %{}),
-        do: {:reply, :ok, {opcode, error_helper(reason, opcode)}, state}
-
-    defp error_helper(reason, :text),   do: Jason.encode!(%{"error" => reason})
-    defp error_helper(reason, :binary), do: Msgpax.pack!(%{"error" => reason})
+    def error(reason, protocol, state \\ %{}) do
+        msg = encode!(%{"error" => inspect(reason)}, protocol)
+        {:reply, :ok, {protocol, msg}, state}
+    end
 end

@@ -3,7 +3,7 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
 
     alias ClusterChess.Sockets.Matchmaking
 
-    test "Join Matchmaking Queue" do
+    test "Join Matchmaking Queue [success]" do
         msg = %{
             "type" => "queue.join",
             "token" => "Guest",
@@ -14,6 +14,20 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
         txt = Jason.encode!(msg)
         result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
         assert {:reply, :ok, {:text, reply}, _state} = result
-        IO.inspect(reply)
+    end
+
+    test "Failed Matchmaking Queue [ill-formed json]" do
+        msg = %{
+            "some" => "invalid data"
+        }
+        txt = Jason.encode!(msg)
+        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        assert {:reply, :ok, {:text, reply}, _state} = result
+    end
+
+    test "Failed Matchmaking Queue [non-json string]" do
+        txt = "some invalid data"
+        result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
+        assert {:reply, :ok, {:text, reply}, _state} = result
     end
 end
