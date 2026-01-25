@@ -1,35 +1,17 @@
 defmodule ClusterChess.Services.Matchmaking do
 
-    use GenServer
-
-    def start_link(name) do
-        GenServer.start_link(__MODULE__, [], name:
-            {:via, Horde.Registry, {:matchmaking_registry, name}})
-    end
+    use ClusterChess.Services.Default,
+        registry: :matchmaking_registry,
+        initial_state: %{ queue: [], matches: 0 }
 
     @impl GenServer
-    def init(state) do
-        IO.puts("#{__MODULE__} started with state: #{inspect(state)} on node #{Node.self()}")
-        {:ok, state}
+    def handle_call(request, from, state) do
+        IO.puts("------------------------------------------")
+        IO.puts("Received call: #{inspect(request)}")
+        IO.puts("From: #{inspect(from)}")
+        IO.puts("Current state: #{inspect(state)}")
+        IO.puts("Current process: #{inspect(self())}")
+        IO.puts("------------------------------------------")
+        {:reply, {:ok, request}, state}
     end
-
-    @impl GenServer
-    def handle_cast(:crash, state) do
-        IO.puts("Crashing now on node #{Node.self()}...")
-        raise "boom"
-        {:noreply, state}
-    end
-
-    @impl GenServer
-    def handle_cast(message, state) do
-        IO.puts("Received message: #{inspect(message)} on node #{Node.self()}")
-        {:noreply, state}
-    end
-
-    @impl GenServer
-    def handle_call(request, _from, state) do
-    IO.puts("Received call: #{inspect(request)} on node #{Node.self()}")
-    {:reply, {:ok, request}, state}
-    end
-
 end

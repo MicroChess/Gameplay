@@ -13,7 +13,7 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
         }
         txt = Jason.encode!(msg)
         result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
-        assert {:reply, :ok, {:text, reply}, _state} = result
+        assert {:reply, :ok, {:text, _reply}, _state} = result
     end
 
     test "Failed Matchmaking Queue [ill-formed json]" do
@@ -22,12 +22,12 @@ defmodule ClusterChess.Sockets.Matchmaking.Test do
         }
         txt = Jason.encode!(msg)
         result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
-        assert {:reply, :ok, {:text, reply}, _state} = result
+        assert {:reply, :ok, {:text, _reply}, _state} = result
     end
 
     test "Failed Matchmaking Queue [non-json string]" do
         txt = "some invalid data"
         result = Matchmaking.handle_in({txt, [opcode: :text]}, %{})
-        assert {:reply, :ok, {:text, reply}, _state} = result
+        assert {:reply, :ok, {:text, _reply}, _state} = result
     end
 end
