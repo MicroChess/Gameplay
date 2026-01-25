@@ -13,12 +13,14 @@ defmodule ClusterChess.Sockets.Matchmaking do
     def handle_in({message, [opcode: protocol]}, state) do
         with {:ok, plain} <- Commons.decode(message, protocol),
              {:ok, token} <- Map.fetch(plain, "token"),
+             {:ok, score} <- Map.fetch(plain, "elo"),
              {:ok, mtype} <- Map.fetch(plain, "type"),
-             {:ok, _indx} <- Enum.find_index(@message_types, &(&1 == mtype)),
-             {:ok, _auth} <- Validation.validate_token(token),
+             {:ok, creds} <- Validation.validate_token(token),
              {:ok, queue} <- Queue.enforce(plain),
              {:ok, qguid} <- Queue.id(queue),
-             {:ok, _resp} <- Commons.delegate(Matchmaking, qguid, queue)
+             {:ok, _resp} <- Commons.delegate(
+                Matchmaking, [qguid], queue
+             )
         do
             prev_joined = Map.get(state, :joined_queues, [])
             filterfunc = fn {queue_id, _datapack} -> queue_id != qguid end
@@ -32,7 +34,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
                 |> Commons.resp(protocol, new_state)
         else
             {:error, reason} -> Commons.error(reason, protocol, state)
-            _ -> Commons.error("Invalid message format", protocol, state)
+            x -> Commons.error("Invalid message format #{inspect(x)}", protocol, state)
         end
     end
 

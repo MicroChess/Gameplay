@@ -1,18 +1,18 @@
 defmodule ClusterChess.Sockets.Commons do
 
-    def delegate(module, name, msg) do
-        case get_worker(module, name) |> GenServer.call(msg) do
+    def delegate(module, opts, msg) do
+        case get_worker(module, opts) |> GenServer.call(msg) do
             :ok -> {:ok, :ack}
             {:ok, something} -> {:ok, something}
-            _ -> delegate(module, name, msg)
+            _ -> delegate(module, opts, msg)
         end
     end
 
-    defp get_worker(module, name) do
-        settings = {module, :start_link, [name]}
+    defp get_worker(module, opts) do
+        settings = {module, :start_link, opts}
         outcome = Horde.DynamicSupervisor.start_child(
             :cluster_processes_supervisor,
-            %{ id: name, restart: :transient, start: settings}
+            %{ id: opts, restart: :transient, start: settings}
         )
         case outcome do
             {:ok, pid} -> pid
