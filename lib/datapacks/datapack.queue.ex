@@ -17,7 +17,7 @@ defmodule ClusterChess.Datapacks.Queue do
     def id(self) do
         with {:ok, minutes}   <- Map.fetch(self, :minutes),
              {:ok, increment} <- Map.fetch(self, :increment),
-             {:ok, gamemode}      <- Map.fetch(self, :gamemode)
+             {:ok, gamemode}  <- Map.fetch(self, :gamemode)
         do
             {:ok, "#{gamemode}-#{minutes}+#{increment}"}
         else

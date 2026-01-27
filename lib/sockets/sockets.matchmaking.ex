@@ -3,6 +3,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
     use ClusterChess.Sockets.Default
 
     alias ClusterChess.Main.Validation
+    alias ClusterChess.Main.Messaging
     alias ClusterChess.Sockets.Commons
     alias ClusterChess.Services.Matchmaking
     alias ClusterChess.Datapacks.Queue
@@ -30,7 +31,7 @@ defmodule ClusterChess.Sockets.Matchmaking do
     end
 
     defp delegate_matchmaking(request, creds) do
-        Commons.delegate(
+        Messaging.summon_and_delegate(
             Matchmaking, request, [
                 gamemode: request.gamemode,
                 player: creds.uid,

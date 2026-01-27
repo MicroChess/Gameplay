@@ -6,23 +6,10 @@ defmodule ClusterChess.Sockets.Commons do
             else: {:error, "Unrecognized item: #{item}"}
     end
 
-    def delegate(module, msg, opts) do
-        case get_worker(module, opts) |> GenServer.call(msg) do
-            :ok -> {:ok, :ack}
-            {:ok, something} -> {:ok, something}
-            _ -> delegate(module, opts, msg)
-        end
-    end
-
-    defp get_worker(module, opts) do
-        settings = {module, :start_link, opts}
-        outcome = Horde.DynamicSupervisor.start_child(
-            :cluster_processes_supervisor,
-            %{ id: opts, restart: :transient, start: settings}
-        )
-        case outcome do
-            {:ok, pid} -> pid
-            {:error, {:already_started, pid}} -> pid
+    def enforce(shapes, data, key) do
+        case Map.fetch(shapes, key) do
+            {:ok, shape} -> shape.enforce(data)
+            _ -> {:error, "Unrecognized shape: #{key}"}
         end
     end
 
