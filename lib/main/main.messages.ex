@@ -21,7 +21,8 @@ defmodule ClusterChess.Main.Messaging do
     defp get_or_spawn(module, opts, id) do
         settings = {module, :start_link, opts}
         outcome = Horde.DynamicSupervisor.start_child(
-            module, %{ id: id, restart: :transient, start: settings}
+            :cluster_processes_supervisor,
+            %{ id: id, restart: :transient, start: settings}
         )
         case outcome do
             {:ok, pid} -> pid

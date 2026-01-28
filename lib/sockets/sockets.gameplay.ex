@@ -9,10 +9,8 @@ defmodule ClusterChess.Sockets.Gameplay do
 
     @shapes %{
         "move.do" => ClusterChess.Datapacks.DoMove,
-        "move.request_undo" => ClusterChess.Datapacks.GameCommunication,
-        "move.accept_undo" => ClusterChess.Datapacks.GameCommunication,
-        "game.offer_draw" => ClusterChess.Datapacks.GameCommunication,
-        "game.accept_draw" => ClusterChess.Datapacks.GameCommunication,
+        "move.undo" => ClusterChess.Datapacks.GameCommunication,
+        "game.draw" => ClusterChess.Datapacks.GameCommunication,
         "game.resign" => ClusterChess.Datapacks.GameCommunication,
         "game.spectate" => ClusterChess.Datapacks.GameCommunication
     }
