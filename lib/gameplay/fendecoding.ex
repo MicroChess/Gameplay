@@ -6,10 +6,10 @@ defmodule ClusterChess.Gameplay.FenDecoding do
         [placement | _] = String.split(fen, " ")
         ranks = Enum.with_index(String.split(placement, "/"))
         for {rank_str, rank_idx} <- ranks,
-            rank_num = 8 - rank_idx,
             {file_idx, piece_char} <- parse_rank(rank_str),
-            file = Enum.at(@files, file_idx),
-            into: %{} do
+        into: %{} do
+            file = Enum.at(@files, file_idx)
+            rank_num = 8 - rank_idx
             {{file, rank_num}, char_to_piece(piece_char)}
         end
     end
