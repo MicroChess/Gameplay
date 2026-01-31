@@ -18,9 +18,7 @@ defmodule ClusterChess.Matchmaking.Queue do
              {:ok, increment} <- Map.fetch(self, :increment),
              {:ok, gamemode}  <- Map.fetch(self, :gamemode)
         do
-            {:ok, "#{gamemode}-#{minutes}+#{increment}"}
-        else
-            _ -> {:error, "Missing key fields"}
+            "#{gamemode}-#{minutes}+#{increment}"
         end
     end
 end

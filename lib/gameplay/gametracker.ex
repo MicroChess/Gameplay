@@ -18,27 +18,7 @@ defmodule ClusterChess.Gameplay.Tracker do
         end)
     end
 
-    defp process("move.do", req, state) do
-        notify_other_players(state)
-        process("game.spectate", req, state)
-    end
-
-    defp process("move.undo", req, state) do
-        notify_other_players(state)
-        process("game.spectate", req, state)
-    end
-
-    defp process("game.draw", req, state) do
-        notify_other_players(state)
-        process("game.spectate", req, state)
-    end
-
-    defp process("game.resign", req, state) do
-        notify_other_players(state)
-        process("game.spectate", req, state)
-    end
-
-    defp process("game.spectate", req, state) do
+    defp register_spectator(req, state) do
         update = update_in(state.spectators, fn set ->
             {caller_pid, _tag} = req["from"]
             old = set || MapSet.new()
@@ -48,4 +28,13 @@ defmodule ClusterChess.Gameplay.Tracker do
         {:reply, {:ok, "request.ack"}, update}
     end
 
+    defp process(type, req, state) do
+        register_spectator(req, state)
+        if type != "game.spectate" do
+            notify_other_players(state)
+        end
+        case type do
+            _ -> {:reply, {:ok, "request.ack"}, state}
+        end
+    end
 end

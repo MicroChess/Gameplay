@@ -8,8 +8,8 @@ defmodule ClusterChess.Gameplay.Socket do
     alias ClusterChess.Gameplay.Tracker
 
     @shapes %{
-        "move.do" => ClusterChess.Gameplay.DoMove,
-        "move.undo" => ClusterChess.Gameplay.Communication,
+        "game.domove" => ClusterChess.Gameplay.DoMove,
+        "game.undo" => ClusterChess.Gameplay.Communication,
         "game.draw" => ClusterChess.Gameplay.Communication,
         "game.resign" => ClusterChess.Gameplay.Communication,
         "game.spectate" => ClusterChess.Gameplay.Communication
