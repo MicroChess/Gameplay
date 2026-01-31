@@ -1,6 +1,6 @@
 defmodule ClusterChess.Commons.Validation do
 
-    @signer Joken.Signer.create("HS256", System.get_env("JWT_SECRET"))
+    @signer Joken.Signer.create("HS256", System.get_env("JWT_SECRET") || "jwt-secret")
 
     def validate_token("Bearer " <> token), do: validate_token(token)
     def validate_token(nil), do: {:error, "no_jwt_token_provided"}
