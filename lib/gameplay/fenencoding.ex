@@ -1,8 +1,10 @@
 defmodule ClusterChess.Gameplay.FenEncoding do
 
+    @files [:a, :b, :c, :d, :e, :f, :g, :h]
+
     def map_to_fen(board, turn) do
         ranks = for rank <- 8..1//-1 do
-            files = for file <- [:a, :b, :c, :d, :e, :f, :g, :h] do
+            files = for file <- @files do
                 Map.get(board, {file, rank}) |> piece_to_char()
             end
             files |> Enum.chunk_by(& &1) |> Enum.map(&runlength/1) |> Enum.concat()
