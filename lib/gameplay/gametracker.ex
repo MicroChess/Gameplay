@@ -11,30 +11,53 @@ defmodule ClusterChess.Gameplay.Tracker do
         end
     end
 
-    defp notify_other_players(state) do
+    defp notify_spectators(state) do
         spectators = Map.get(state, :spectators, MapSet.new())
         Enum.each(spectators, fn spectator ->
             send(spectator, {:forward, Jason.encode!(state.board)})
         end)
     end
 
-    defp register_spectator(req, state) do
-        update = update_in(state.spectators, fn set ->
-            {caller_pid, _tag} = req["from"]
+    defp update_spectators(state, from) do
+        update_in(state.spectators, fn set ->
             old = set || MapSet.new()
-            expansion = MapSet.new([caller_pid])
+            expansion = MapSet.new([from])
             MapSet.union(old, expansion)
         end)
-        {:reply, {:ok, "request.ack"}, update}
     end
 
     defp process(type, req, state) do
-        register_spectator(req, state)
+        state = update_spectators(state, req["from"])
         if type != "game.spectate" do
-            notify_other_players(state)
+            notify_spectators(state)
         end
         case type do
-            _ -> {:reply, {:ok, "request.ack"}, state}
+            "game.domove"   -> handle_move(req, state)
+            "game.undo"     -> handle_undo(req, state)
+            "game.draw"     -> handle_draw(req, state)
+            "game.resign"   -> handle_resign(req, state)
+            "game.spectate" -> handle_spectate(req, state)
+            _something_else -> {:reply, :fatal, state}
         end
+    end
+
+    defp handle_move(_req, state) do
+        {:reply, {:ok, "game.domove.ack"}, state}
+    end
+
+    defp handle_undo(_req, state) do
+        {:reply, {:ok, "game.undo.ack"}, state}
+    end
+
+    defp handle_draw(_req, state) do
+        {:reply, {:ok, "game.draw.ack"}, state}
+    end
+
+    defp handle_resign(_req, state) do
+        {:reply, {:ok, "game.resign.ack"}, state}
+    end
+
+    defp handle_spectate(_req, state) do
+        {:reply, {:ok, "game.spectate.ack"}, state}
     end
 end
