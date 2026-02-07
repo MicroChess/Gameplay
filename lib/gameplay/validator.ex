@@ -62,7 +62,6 @@ defmodule ClusterChess.Gameplay.Validator do
     end
 
     def valid_move_path(board, path) do
-
         {sf, sr} = hd(path)
         {df, dr} = List.last(path)
         Enum.all?(path, fn {f, r} ->
