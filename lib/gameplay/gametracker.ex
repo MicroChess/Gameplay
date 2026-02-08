@@ -1,6 +1,7 @@
 defmodule ClusterChess.Gameplay.Tracker do
 
     use ClusterChess.Commons.Service
+    alias ClusterChess.Gameplay.Validation
 
     @impl GenServer
     def handle_call(datapack, from, state) do
@@ -28,36 +29,55 @@ defmodule ClusterChess.Gameplay.Tracker do
 
     defp process(type, req, state) do
         state = update_spectators(state, req["from"])
-        if type != "game.spectate" do
-            notify_spectators(state)
+        {white, black} = {state.white_player, state.black_player}
+        turn = if state.turn == :white,
+            do: state.white_player,
+            else: state.black_player
+        out = case {req["uid"], type} do
+            {^turn, "game.domove"}  -> handle_move(req, state)
+            {^white, "game.undo"}   -> handle_undo(req, state)
+            {^white, "game.draw"}   -> handle_draw(req, state)
+            {^white, "game.resign"} -> handle_resign(req, state)
+            {^black, "game.undo"}   -> handle_undo(req, state)
+            {^black, "game.draw"}   -> handle_draw(req, state)
+            {^black, "game.resign"} -> handle_resign(req, state)
+            {_any, "game.spectate"} -> handle_spectate(req, state)
+            _unrecognized_msg_type  -> {:fatal, "unrecognized msg"}
         end
-        case type do
-            "game.domove"   -> handle_move(req, state)
-            "game.undo"     -> handle_undo(req, state)
-            "game.draw"     -> handle_draw(req, state)
-            "game.resign"   -> handle_resign(req, state)
-            "game.spectate" -> handle_spectate(req, state)
-            _something_else -> {:reply, :fatal, state}
+        with {:ok, new_state} <- out do
+            notify_spectators(new_state)
+            {:reply, :ok, new_state}
+        else
+            err -> {:reply, err, state}
         end
     end
 
-    defp handle_move(_req, state) do
-        {:reply, {:ok, "game.domove.ack"}, state}
+    defp handle_move(req, state) do
+        after_move = state.board
+            |> Map.put(req.to, Map.get(state.board, req.from))
+            |> Map.delete(req.from)
+        new_turn = if state.turn == state.white_player,
+            do: state.black_player,
+            else: state.white_player
+        case Validation.validate_move(state.board, req.from, req.to) do
+            true -> {:ok, %{state | board: after_move, turn: new_turn}}
+            {:error, reason} -> {:fatal, reason}
+        end
     end
 
     defp handle_undo(_req, state) do
-        {:reply, {:ok, "game.undo.ack"}, state}
+        {:ok, state}
     end
 
     defp handle_draw(_req, state) do
-        {:reply, {:ok, "game.draw.ack"}, state}
+        {:ok, state}
     end
 
     defp handle_resign(_req, state) do
-        {:reply, {:ok, "game.resign.ack"}, state}
+        {:ok, state}
     end
 
     defp handle_spectate(_req, state) do
-        {:reply, {:ok, "game.spectate.ack"}, state}
+        {:ok, state}
     end
 end

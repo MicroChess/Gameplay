@@ -1,7 +1,7 @@
 defmodule ClusterChess.Gameplay.Knights.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Gameplay.Validator
+    alias ClusterChess.Gameplay.Validation
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
     @ranks [1, 2, 3, 4, 5, 6, 7, 8]
 
@@ -17,12 +17,12 @@ defmodule ClusterChess.Gameplay.Knights.Test do
 
     test "knight move ok [L-shape, c3 -> b1, capture]" do
         board = %{ {:c, 3} => {:knight, :white}, {:b, 1} => {:pawn, :black} }
-        assert Validator.validate_move(board, {:c, 3}, {:b, 1})
+        assert Validation.validate_move(board, {:c, 3}, {:b, 1})
     end
 
     test "knight move ok [L-shape, c3 -> b1, with suicide]" do
         board = %{ {:c, 3} => {:knight, :white}, {:b, 1} => {:pawn, :white} }
-        assert not Validator.validate_move(board, {:c, 3}, {:b, 1})
+        assert not Validation.validate_move(board, {:c, 3}, {:b, 1})
     end
 
     test "knight move ok [L-shape, c3 -> b1, with jump over opponents]" do
@@ -30,7 +30,7 @@ defmodule ClusterChess.Gameplay.Knights.Test do
             {{f, r}, {:pawn, :black}}
         end
         board = Map.put(board, {:c, 3}, {:knight, :white})
-        assert Validator.validate_move(board, {:c, 3}, {:b, 1})
+        assert Validation.validate_move(board, {:c, 3}, {:b, 1})
     end
 
     test "knight move ok [L-shape, c3 -> b1, with over firends]" do
@@ -39,6 +39,6 @@ defmodule ClusterChess.Gameplay.Knights.Test do
         end
         board = Map.put(board, {:c, 3}, {:knight, :white})
         board = Map.put(board, {:b, 1}, {:rook, :black})
-        assert Validator.validate_move(board, {:c, 3}, {:b, 1})
+        assert Validation.validate_move(board, {:c, 3}, {:b, 1})
     end
 end

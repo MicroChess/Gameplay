@@ -1,6 +1,9 @@
-defmodule ClusterChess.Gameplay.Validator do
+defmodule ClusterChess.Gameplay.Validation do
 
     alias ClusterChess.Gameplay.Board
+
+    @files [:a, :b, :c, :d, :e, :f, :g, :h]
+    @ranks [1, 2, 3, 4, 5, 6, 7, 8]
 
     def validate_move(board, from, to) do
         case Map.get(board, from) do
@@ -79,7 +82,9 @@ defmodule ClusterChess.Gameplay.Validator do
 
     def valid_move_ends(board, {sf, sr}, {df, dr}) do
         {color1, color2} = Board.color(board, {sf, sr}, {df, dr})
-        color1 != color2 and color1 != nil
+        color1 != color2 and color1 != nil and
+        sf in @files and df in @files and
+        sr in @ranks and dr in @ranks
     end
 
     def valid_move_path(board, path) do
