@@ -28,7 +28,7 @@ defmodule ClusterChess.Gameplay.Bishops.Test do
     end
 
     test "bishop move ok [\\, a1 <- d4, no capture]" do
-        board = %{ {:a, 1} => {:pawn, :white} }
+        board = %{ {:d, 4} => {:bishop, :black} }
         state = %{board: board, castling_rights: %{}}
         assert BishopMoves.valid_move?(state, {:d, 4}, {:a, 1})
     end

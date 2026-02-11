@@ -48,6 +48,9 @@ defmodule ClusterChess.Rules.Utilities do
         end
     end
 
+    def empty?(board, pos),
+        do: color(board, pos) == nil
+
     def color(board, pos1, pos2),
         do: {color(board, pos1), color(board, pos2)}
 

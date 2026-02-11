@@ -10,10 +10,13 @@ defmodule ClusterChess.Rules.PawnMoves do
 
     def valid_single_push?(state, from, to),
         do: increment(state, from, {0, 1}) == to
+        and Utilities.empty?(state.board, to)
 
     def valid_double_push?(state, from, to),
         do: increment(state, from, {0, 2}) == to
         and starting_rank?(state, from)
+        and Utilities.empty?(state.board, increment(state, from, {0, 1}))
+        and Utilities.empty?(state.board, increment(state, from, {0, 2}))
 
     def valid_capture?(state, from, to),
         do: (increment(state, from, {1, 1}) == to
