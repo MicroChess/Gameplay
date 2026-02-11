@@ -14,20 +14,23 @@ defmodule ClusterChess.Rules.PawnMoves do
 
     def valid_double_push?(state, from, to),
         do: increment(state, from, {0, 2}) == to
-        and starting_rank?(state, from)
+        and starting_rank?(Utilities.color(state.board, from), from)
         and Utilities.empty?(state.board, increment(state, from, {0, 1}))
         and Utilities.empty?(state.board, increment(state, from, {0, 2}))
 
     def valid_capture?(state, from, to),
-        do: (increment(state, from, {1, 1}) == to
-        or  increment(state, from, {-1, 1}) == to)
-        and Utilities.color(state.board, to)
-        not in [nil, Utilities.color(state.board, from)]
+        do: to in bilateral_increments(state, from, {1, 1})
+        and Utilities.color(state.board, to) != Utilities.color(state.board, from)
+        and Utilities.color(state.board, to) != nil
 
+    def valid_en_passant?(state, from, to),
+        do: to in bilateral_increments(state, from, {1, 1})
+        and state.en_passant_target in bilateral_increments(state, from, {1, 0})
+        and Utilities.color(state.board, to) == nil
+        and state.en_passant_target != nil
 
-    def valid_en_passant?(_state, _from, _to) do
-        false
-    end
+    defp starting_rank?(:white, {_file, r}), do: r == 2
+    defp starting_rank?(:black, {_file, r}), do: r == 7
 
     defp increment(state, {f, r}, {x, y}) do
         case Utilities.color(state.board, {f, r}) do
@@ -37,12 +40,8 @@ defmodule ClusterChess.Rules.PawnMoves do
         end
     end
 
-    defp starting_rank?(state, {f, r}) do
-        case Utilities.color(state.board, {f, r}) do
-            :white -> r == 2
-            :black -> r == 7
-            _ -> false
-        end
-    end
-
+    defp bilateral_increments(state, {f, r}, {x, y}), do: [
+        increment(state, {f, r}, {x, y}),
+        increment(state, {f, r}, {-x, y})
+    ]
 end

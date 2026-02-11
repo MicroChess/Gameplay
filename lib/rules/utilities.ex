@@ -30,15 +30,15 @@ defmodule ClusterChess.Rules.Utilities do
         sr in @ranks and dr in @ranks
     end
 
-    def valid_move_path?(state, path) do
+    defp valid_move_path?(state, path) do
         from = {sf, sr} = hd(path)
         to = {df, dr} = List.last(path)
+        length(path) > 1 and
+        valid_move_ends?(state, from, to) and
         Enum.all?(path, fn {f, r} ->
             {f, r} in [{df, dr}, {sf, sr}]
             or not Map.has_key?(state.board, {f, r})
         end)
-        and length(path) > 1
-        and valid_move_ends?(state, from, to)
     end
 
     def valid_straight_move?(state, {sf, sr}, {df, dr}) do
