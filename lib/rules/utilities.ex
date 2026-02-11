@@ -10,7 +10,7 @@ defmodule ClusterChess.Rules.Utilities do
     alias ClusterChess.Rules.PawnMoves
     alias ClusterChess.Rules.KnightMoves
 
-     def valid_move?(state, from, to) do
+    def valid_move?(state, from, to) do
         case Map.get(state.board, from) do
             nil -> {:error, :no_piece_at_from}
             {:king, _color}    -> KingMoves.valid_move?(state, from, to)
