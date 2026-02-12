@@ -1,0 +1,47 @@
+defmodule ClusterChess.Rules.PawnMoves do
+
+    alias ClusterChess.Rules.Utilities
+
+    def valid_move?(state, from, to),
+        do: valid_single_push?(state, from, to)
+        or  valid_double_push?(state, from, to)
+        or  valid_capture?(state, from, to)
+        or  valid_en_passant?(state, from, to)
+
+    def valid_single_push?(state, from, to),
+        do: increment(state, from, {0, 1}) == to
+        and Utilities.empty?(state.board, to)
+
+    def valid_double_push?(state, from, to),
+        do: increment(state, from, {0, 2}) == to
+        and starting_rank?(Utilities.color(state.board, from), from)
+        and Utilities.empty?(state.board, increment(state, from, {0, 1}))
+        and Utilities.empty?(state.board, increment(state, from, {0, 2}))
+
+    def valid_capture?(state, from, to),
+        do: to in bilateral_increments(state, from, {1, 1})
+        and Utilities.color(state.board, to) != Utilities.color(state.board, from)
+        and Utilities.color(state.board, to) != nil
+
+    def valid_en_passant?(state, from, to),
+        do: to in bilateral_increments(state, from, {1, 1})
+        and state.en_passant_target in bilateral_increments(state, from, {1, 0})
+        and Utilities.color(state.board, to) == nil
+        and state.en_passant_target != nil
+
+    defp starting_rank?(:white, {_file, r}), do: r == 2
+    defp starting_rank?(:black, {_file, r}), do: r == 7
+
+    defp increment(state, {f, r}, {x, y}) do
+        case Utilities.color(state.board, {f, r}) do
+            :white -> {List.to_atom([?a + Utilities.intify(f) + x]), r + y}
+            :black -> {List.to_atom([?a + Utilities.intify(f) - x]), r - y}
+            _ -> {f, r}
+        end
+    end
+
+    defp bilateral_increments(state, {f, r}, {x, y}), do: [
+        increment(state, {f, r}, {x, y}),
+        increment(state, {f, r}, {-x, y})
+    ]
+end

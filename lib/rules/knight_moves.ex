@@ -1,0 +1,19 @@
+defmodule ClusterChess.Rules.KnightMoves do
+
+    alias ClusterChess.Rules.Utilities
+
+    def valid_move?(board, from, to),
+        do: both_distances(from, to) in [{1, 2}, {2, 1}]
+        and Utilities.valid_move_ends?(board, from, to)
+
+    defp both_distances(from, to), do: {
+        horizontal_distance(from, to),
+        vertical_distance(from, to)
+    }
+
+    defp horizontal_distance({sf, _}, {df, _}),
+        do: abs(Utilities.intify(sf) - Utilities.intify(df))
+
+    defp vertical_distance({_, sr}, {_, dr}),
+        do: abs(sr - dr)
+end
