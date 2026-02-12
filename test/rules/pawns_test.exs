@@ -1,4 +1,4 @@
-defmodule ClusterChess.Gameplay.Pawns.Test do
+defmodule ClusterChess.Rules.Pawns.Test do
     use ExUnit.Case
 
     alias ClusterChess.Rules.PawnMoves

@@ -25,15 +25,15 @@ defmodule ClusterChess.Rules.KingMoves do
     def valid_castling_path?(state, from, to) do
         {piece, color} = Map.get(state.board, from, {nil, nil})
         case {piece, color, to} do
-            {:king, :white, {:c, 1}} -> safe_castling_path?(state, from, {:b, 1})
-            {:king, :white, {:g, 1}} -> safe_castling_path?(state, from, {:f, 1})
-            {:king, :black, {:c, 8}} -> safe_castling_path?(state, from, {:b, 8})
-            {:king, :black, {:g, 8}} -> safe_castling_path?(state, from, {:f, 8})
+            {:king, :white, {:c, 1}} -> safe_castling_path?(state, from, {:b, 1}, to)
+            {:king, :white, {:g, 1}} -> safe_castling_path?(state, from, {:f, 1}, to)
+            {:king, :black, {:c, 8}} -> safe_castling_path?(state, from, {:b, 8}, to)
+            {:king, :black, {:g, 8}} -> safe_castling_path?(state, from, {:f, 8}, to)
             _ -> false
         end
     end
 
-    def safe_castling_path?(state, {sf, sr}, {df, dr}) do
+    def safe_castling_path?(state, {sf, sr}, extension, {df, dr}) do
         {sf_int, df_int} = Utilities.intify(sf, df)
         path = for f <- (sf_int .. df_int), r <- (sr .. dr), do: {List.to_atom([?a + f]), r}
         king_color = Utilities.color(state.board, {sf, sr})
@@ -41,7 +41,7 @@ defmodule ClusterChess.Rules.KingMoves do
         enemies = for {enemy, {_, color}} <- state.board,
             color not in [nil, king_color], do: enemy
 
-        Utilities.valid_straight_move?(state, {sf, sr}, {df, dr})
+        Utilities.valid_straight_move?(state, {sf, sr}, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
             do: not Utilities.valid_move?(state, enemy, king)
         )
