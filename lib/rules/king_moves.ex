@@ -6,20 +6,14 @@ defmodule ClusterChess.Rules.KingMoves do
         do: valid_push_or_capture?(state, from, to)
         or  valid_castling?(state, from, to)
 
+    def valid_push_or_capture?(state, from, to),
+        do: valid_straight_move_or_diagonal_move?(state, from, to)
+        and Utilities.horizontal_distance(from, to) in [0, 1]
+        and Utilities.vertical_distance(from, to) in [0, 1]
+
     def valid_straight_move_or_diagonal_move?(state, from, to),
         do: Utilities.valid_straight_move?(state, from, to)
         or  Utilities.valid_diagonal_move?(state, from, to)
-
-    def valid_push_or_capture?(state, from, to),
-        do: valid_straight_move_or_diagonal_move?(state, from, to)
-        and horizontal_distance(from, to) in [0, 1]
-        and vertical_distance(from, to) in [0, 1]
-
-    defp horizontal_distance({sf, _}, {df, _}),
-        do: abs(Utilities.intify(sf) - Utilities.intify(df))
-
-    defp vertical_distance({_, sr}, {_, dr}),
-        do: abs(sr - dr)
 
     def valid_castling?(state, from, to),
         do: valid_castling_path?(state, from, to)
