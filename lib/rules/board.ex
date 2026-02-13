@@ -37,7 +37,7 @@ defmodule ClusterChess.Rules.Board do
         piece = elem(square, 0)
         distance = Utilities.vertical_distance(from, to)
         case {piece, distance} do
-            {:pawn, 2} -> %{state | en_passant_target: to}
+            {:pawn, 2}  -> %{state | en_passant_target: to}
             {:pawn, -2} -> %{state | en_passant_target: to}
             _ -> %{state | en_passant_target: nil}
         end
