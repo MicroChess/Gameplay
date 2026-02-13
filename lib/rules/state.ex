@@ -58,7 +58,7 @@ defmodule ClusterChess.Rules.State do
     end
 
     def apply_en_passant(state, from, to) do
-        new_board = state.board |> Map.delete(state.en_passant_target)
+        new_board = Map.delete(state.board, state.en_passant_target)
         tmp = %{state | board: new_board}
         apply_normal_move(tmp, from, to)
     end
