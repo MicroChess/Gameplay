@@ -32,6 +32,32 @@ defmodule ClusterChess.Rules.Board do
         end
     end
 
+    def update_en_passant_target(state, from, to) do
+        square = Map.get(state.squares, from, {nil, nil})
+        piece = elem(square, 0)
+        distance = Utilities.vertical_distance(from, to)
+        case {piece, distance} do
+            {:pawn, 2} -> %{state | en_passant_target: to}
+            {:pawn, -2} -> %{state | en_passant_target: to}
+            _ -> %{state | en_passant_target: nil}
+        end
+    end
+
+    def update_castling_rights(state, from, _to) do
+        {piece, color} = Map.get(state.squares, from, {nil, nil})
+        rights = state.castling_rights
+        new_rights = case {piece, color, from} do
+            {:king, :white, {:e, 1}} -> %{rights | black_lx: false, black_sx: false}
+            {:rook, :white, {:a, 1}} -> %{rights | white_lx: false}
+            {:rook, :white, {:h, 1}} -> %{rights | white_sx: false}
+            {:king, :black, {:e, 8}} -> %{rights | white_lx: false, white_sx: false}
+            {:rook, :black, {:a, 8}} -> %{rights | black_lx: false}
+            {:rook, :black, {:h, 8}} -> %{rights | black_sx: false}
+            _ -> rights
+        end
+        %{state | castling_rights: new_rights}
+    end
+
     def apply_move(state, from, to) do
         cond do
             Utilities.color(state.squares, from) != state.turn -> :invalid_move
@@ -55,8 +81,8 @@ defmodule ClusterChess.Rules.Board do
     end
 
     def apply_en_passant(state, from, to) do
-        new_board = Map.delete(state.squares, state.en_passant_target)
-        tmp = %{state | board: new_board}
+        new = Map.delete(state.squares, state.en_passant_target)
+        tmp = %{state | squares: new}
         apply_normal_move(tmp, from, to)
     end
 
@@ -67,5 +93,7 @@ defmodule ClusterChess.Rules.Board do
         |> Map.put(to, piece)
         opponent = Utilities.opponent(state.turn)
         %{state | board: new_board, turn: opponent}
+        |> update_en_passant_target(from, to)
+        |> update_castling_rights(from, to)
     end
 end

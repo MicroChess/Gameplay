@@ -3,6 +3,11 @@ defmodule ClusterChess.Rules.PawnMoves do
     alias ClusterChess.Rules.Utilities
 
     def valid_move?(state, from, to),
+        do: valid_push_or_capture_or_en_passant?(state, from, to)
+        and Map.get(state.squares, from) != nil
+        and Map.get(state.squares, from) |> elem(0) == :pawn
+
+    def valid_push_or_capture_or_en_passant?(state, from, to),
         do: valid_single_push?(state, from, to)
         or  valid_double_push?(state, from, to)
         or  valid_capture?(state, from, to)

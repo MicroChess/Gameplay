@@ -5,6 +5,8 @@ defmodule ClusterChess.Rules.KnightMoves do
     def valid_move?(board, from, to),
         do: both_distances(from, to) in [{1, 2}, {2, 1}]
         and Utilities.valid_move_ends?(board, from, to)
+        and Map.get(board.squares, from) != nil
+        and Map.get(board.squares, from) |> elem(0) == :knight
 
     defp both_distances(from, to), do: {
         horizontal_distance(from, to),

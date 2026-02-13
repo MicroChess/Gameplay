@@ -4,6 +4,11 @@ defmodule ClusterChess.Rules.KingMoves do
     alias ClusterChess.Rules.Utilities
 
     def valid_move?(state, from, to),
+        do: valid_push_or_capture_or_castling?(state, from, to)
+        and Map.get(state.squares, from) != nil
+        and Map.get(state.squares, from) |> elem(0) == :king
+
+    def valid_push_or_capture_or_castling?(state, from, to),
         do: valid_push_or_capture?(state, from, to)
         or  valid_castling?(state, from, to)
 
