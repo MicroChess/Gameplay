@@ -2,6 +2,15 @@ defmodule ClusterChess.Rules.QueenMoves do
 
     alias ClusterChess.Rules.Utilities
 
+    def legal_moves(board, from) do
+        hz = for x <- -7..7, do: Utilities.shift(board, from, {x, 0})
+        vt = for y <- -7..7, do: Utilities.shift(board, from, {0, y})
+        d1 = for z <- -7..7, do: Utilities.shift(board, from, {z, z})
+        d2 = for z <- -7..7, do: Utilities.shift(board, from, {z, -z})
+        moves = hz ++ vt ++ d1 ++ d2
+        Enum.filter(moves, fn to -> valid_move?(board, from, to) end)
+    end
+
     def valid_move?(state, from, to),
         do: valid_straight_move_or_diagonal_move?(state, from, to)
         and Map.get(state.squares, from) != nil

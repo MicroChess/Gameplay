@@ -3,6 +3,12 @@ defmodule ClusterChess.Rules.KingMoves do
     alias ClusterChess.Rules.Board
     alias ClusterChess.Rules.Utilities
 
+    def legal_moves(board, from) do
+        castlings = [{:c, 1}, {:g, 1}, {:c, 8}, {:g, 8}]
+        ms = for x <- -1..1, y <- -1..1, do: Utilities.shift(board, from, {x, y})
+        Enum.filter(ms ++ castlings, fn to -> valid_move?(board, from, to) end)
+    end
+
     def valid_move?(state, from, to),
         do: valid_push_or_capture_or_castling?(state, from, to)
         and Map.get(state.squares, from) != nil
@@ -41,7 +47,7 @@ defmodule ClusterChess.Rules.KingMoves do
     def safe_castling_path?(state, from, extension, to) do
         king_color = Utilities.color(state.squares, from)
         path = Utilities.path(from, to)
-        enemies = Utilities.enemies(state, king_color)
+        enemies = Board.enemies(state, king_color)
         Utilities.valid_straight_move?(state, from, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
             do: not Board.valid_move?(state, enemy, king)

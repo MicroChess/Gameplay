@@ -22,16 +22,10 @@ defmodule ClusterChess.Rules.Utilities do
         end)
     end
 
-
     def path({sf, sr}, {df, dr}) do
         {sf_int, df_int} = intify(sf, df)
         for f <- (sf_int .. df_int), r <- (sr .. dr),
             do: {List.to_atom([?a + f]), r}
-    end
-
-    def enemies(state, friendly_color) do
-        for {enemy, {_, color}} <- state.squares,
-            color not in [nil, friendly_color], do: enemy
     end
 
     def valid_straight_move?(state, {sf, sr}, {df, dr}) do
@@ -57,6 +51,14 @@ defmodule ClusterChess.Rules.Utilities do
         case Map.get(board, pos) do
             nil -> nil
             {_piece, color} -> color
+        end
+    end
+
+    def shift(state, {f, r}, {x, y}) do
+        case color(state.squares, {f, r}) do
+            :white -> {List.to_atom([?a + intify(f) + x]), r + y}
+            :black -> {List.to_atom([?a + intify(f) - x]), r - y}
+            _ -> {f, r}
         end
     end
 

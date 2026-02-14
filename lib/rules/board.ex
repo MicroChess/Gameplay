@@ -1,12 +1,12 @@
 defmodule ClusterChess.Rules.Board do
 
-    alias ClusterChess.Rules.Utilities
     alias ClusterChess.Rules.KingMoves
     alias ClusterChess.Rules.QueenMoves
     alias ClusterChess.Rules.RookMoves
     alias ClusterChess.Rules.BishopMoves
     alias ClusterChess.Rules.PawnMoves
     alias ClusterChess.Rules.KnightMoves
+    alias ClusterChess.Rules.MakeMoves
 
     defstruct [
         squares: %{},
@@ -16,6 +16,8 @@ defmodule ClusterChess.Rules.Board do
             black_lx: true,
             black_sx: true
         },
+        white_king_location: {:e, 1},
+        black_king_location: {:e, 8},
         en_passant_target: nil,
         turn: :white
     ]
@@ -32,69 +34,66 @@ defmodule ClusterChess.Rules.Board do
         end
     end
 
-    def update_en_passant_target(state, from, to) do
-        square = Map.get(state.squares, from, {nil, nil})
-        piece = elem(square, 0)
-        distance = Utilities.vertical_distance(from, to)
-        case {piece, distance} do
-            {:pawn, 2}  -> %{state | en_passant_target: to}
-            {:pawn, -2} -> %{state | en_passant_target: to}
-            _ -> %{state | en_passant_target: nil}
+    def legal_moves(state, from) do
+        case Map.get(state.squares, from) do
+            {:king, _color}   -> KingMoves.legal_moves(state, from)
+            {:queen, _color}  -> QueenMoves.legal_moves(state, from)
+            {:rook, _color}   -> RookMoves.legal_moves(state, from)
+            {:bishop, _color} -> BishopMoves.legal_moves(state, from)
+            {:pawn, _color}   -> PawnMoves.legal_moves(state, from)
+            {:knight, _color} -> KnightMoves.legal_moves(state, from)
+            _empty_nil_square -> false
         end
     end
 
-    def update_castling_rights(state, from, _to) do
-        {piece, color} = Map.get(state.squares, from, {nil, nil})
-        rights = state.castling_rights
-        new_rights = case {piece, color, from} do
-            {:king, :white, {:e, 1}} -> %{rights | white_kingside: false, white_queenside: false}
-            {:rook, :white, {:a, 1}} -> %{rights | white_queenside: false}
-            {:rook, :white, {:h, 1}} -> %{rights | white_kingside: false}
-            {:king, :black, {:e, 8}} -> %{rights | black_kingside: false, black_queenside: false}
-            {:rook, :black, {:a, 8}} -> %{rights | black_queenside: false}
-            {:rook, :black, {:h, 8}} -> %{rights | black_kingside: false}
-            _ -> rights
-        end
-        %{state | castling_rights: new_rights}
+    def all_legal_moves(state, target_color) do
+        for {square, {_, piece_color}} <- state.squares,
+            target_color == piece_color,
+            to <- legal_moves(state, square),
+        do: {square, to}
     end
 
-    def apply_move(state, from, to) do
-        cond do
-            Utilities.color(state.squares, from) != state.turn -> :invalid_move
-            PawnMoves.valid_en_passant?(state, from, to) -> apply_en_passant(state, from, to)
-            KingMoves.valid_castling?(state, from, to) -> apply_castling(state, from, to)
-            valid_move?(state, from, to) -> apply_normal_move(state, from, to)
-            true -> :invalid_move
+    def king_location(board, color) do
+        case color do
+            :white -> board.white_king_location
+            :black -> board.black_king_location
         end
     end
 
-    def apply_castling(state, from, to) do
-        {rook_from, rook_to} = case to do
-            {:c, 1} -> {{:a, 1}, {:d, 1}}
-            {:g, 1} -> {{:h, 1}, {:f, 1}}
-            {:c, 8} -> {{:a, 8}, {:d, 8}}
-            {:g, 8} -> {{:h, 8}, {:f, 8}}
+    def enemies(state, friendly_color) do
+        for {enemy, {_, color}} <- state.squares,
+            color not in [nil, friendly_color], do: enemy
+    end
+
+    def allies(state, friendly_color) do
+        for {ally, {_, color}} <- state.squares,
+            color == friendly_color, do: ally
+    end
+
+    def king_in_check?(board, color) do
+        king_loc = king_location(board, color)
+        enemies = enemies(board, color)
+        Enum.any?(enemies, fn enemy ->
+            valid_move?(board, enemy, king_loc)
+        end)
+    end
+
+    def king_status(board, color) do
+        legal_moves = all_legal_moves(board, color)
+        in_check? = king_in_check?(board, color)
+        case {legal_moves, in_check?} do
+            {[], true}  -> :checkmate
+            {[], false} -> :stalemate
+            {mvs, true} -> checkmate?(board, color, mvs)
+            _some_other -> :safe
         end
-        %{state | turn: Utilities.opponent(state.turn)}
-        |> apply_normal_move(from, to)
-        |> apply_normal_move(rook_from, rook_to)
     end
 
-    def apply_en_passant(state, from, to) do
-        new = Map.delete(state.squares, state.en_passant_target)
-        tmp = %{state | squares: new}
-        apply_normal_move(tmp, from, to)
-    end
-
-    def apply_normal_move(state, from, to) do
-        piece = Map.get(state.squares, from)
-        new_squares = state.squares
-        |> Map.delete(from)
-        |> Map.put(to, piece)
-        opponent = Utilities.opponent(state.turn)
-        update_en_passant_target(state, from, to)
-        |> update_castling_rights(from, to)
-        |> Map.put(:squares, new_squares)
-        |> Map.put(:turn, opponent)
+    def checkmate?(board, color, all_legal_moves) do
+        Enum.all?(all_legal_moves, fn {from, to} ->
+            new_board = MakeMoves.apply_move(board, from, to)
+            valid? = (new_board != :invalid_move)
+            valid? and king_in_check?(new_board, color)
+        end)
     end
 end

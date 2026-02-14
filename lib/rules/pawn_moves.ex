@@ -2,6 +2,12 @@ defmodule ClusterChess.Rules.PawnMoves do
 
     alias ClusterChess.Rules.Utilities
 
+    def legal_moves(board, from) do
+        ms = for x <- -1..1, y <- 1..2, do:
+            Utilities.shift(board, from, {x, y})
+        Enum.filter(ms, fn to -> valid_move?(board, from, to) end)
+    end
+
     def valid_move?(state, from, to),
         do: valid_push_or_capture_or_en_passant?(state, from, to)
         and Map.get(state.squares, from) != nil
@@ -14,14 +20,14 @@ defmodule ClusterChess.Rules.PawnMoves do
         or  valid_en_passant?(state, from, to)
 
     def valid_single_push?(state, from, to),
-        do: increment(state, from, {0, 1}) == to
+        do: Utilities.shift(state, from, {0, 1}) == to
         and Utilities.empty?(state.squares, to)
 
     def valid_double_push?(state, from, to),
-        do: increment(state, from, {0, 2}) == to
+        do: Utilities.shift(state, from, {0, 2}) == to
         and starting_rank?(Utilities.color(state.squares, from), from)
-        and Utilities.empty?(state.squares, increment(state, from, {0, 1}))
-        and Utilities.empty?(state.squares, increment(state, from, {0, 2}))
+        and Utilities.empty?(state.squares, Utilities.shift(state, from, {0, 1}))
+        and Utilities.empty?(state.squares, Utilities.shift(state, from, {0, 2}))
 
     def valid_capture?(state, from, to),
         do: to in bilateral_increments(state, from, {1, 1})
@@ -39,16 +45,8 @@ defmodule ClusterChess.Rules.PawnMoves do
     defp starting_rank?(:white, {_file, r}), do: r == 2
     defp starting_rank?(:black, {_file, r}), do: r == 7
 
-    defp increment(state, {f, r}, {x, y}) do
-        case Utilities.color(state.squares, {f, r}) do
-            :white -> {List.to_atom([?a + Utilities.intify(f) + x]), r + y}
-            :black -> {List.to_atom([?a + Utilities.intify(f) - x]), r - y}
-            _ -> {f, r}
-        end
-    end
-
     defp bilateral_increments(state, {f, r}, {x, y}), do: [
-        increment(state, {f, r}, {x, y}),
-        increment(state, {f, r}, {-x, y})
+        Utilities.shift(state, {f, r}, {x, y}),
+        Utilities.shift(state, {f, r}, {-x, y})
     ]
 end

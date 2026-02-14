@@ -1,7 +1,7 @@
 defmodule ClusterChess.Rules.Board.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.Board
+    alias ClusterChess.Rules.MakeMoves
 
     @full_castling_rights %{
         white_kingside:  true,
@@ -16,10 +16,12 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
-        assert Board.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
     end
 
     test "board move ok [valid move, white turn, erase existing en-passant]" do
@@ -28,10 +30,12 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: {:b, 4},
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
-        assert Board.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
     end
 
     test "board move ok [valid move, white turn, make en-passant target]" do
@@ -40,10 +44,12 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
-        assert Board.apply_move(state, {:a, 2}, {:a, 4}).en_passant_target == {:a, 4}
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 4}).en_passant_target == {:a, 4}
     end
 
     test "board move ok [illegal move, too far away]" do
@@ -52,9 +58,11 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 2}, {:a, 8}) == :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 8}) == :invalid_move
     end
 
     test "board move ok [valid move, white turn, castling]" do
@@ -63,9 +71,11 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: {:e, 1},
+            black_king_location: nil
         }
-        out = Board.apply_move(state, {:e, 1}, {:g, 1})
+        out = MakeMoves.apply_move(state, {:e, 1}, {:g, 1})
         assert out != :invalid_move
         assert out.castling_rights.white_kingside == false
         assert out.castling_rights.white_queenside == false
@@ -79,9 +89,11 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: {:e, 1},
+            black_king_location: nil
         }
-        out = Board.apply_move(state, {:h, 1}, {:h, 3})
+        out = MakeMoves.apply_move(state, {:h, 1}, {:h, 3})
         assert out != :invalid_move
         assert out.castling_rights.white_kingside == false
         assert out.castling_rights.white_queenside == true
@@ -95,9 +107,11 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :white,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 7}, {:a, 6}) == :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}) == :invalid_move
     end
 
     test "board move ok [black's turn, check turn after move]" do
@@ -106,9 +120,11 @@ defmodule ClusterChess.Rules.Board.Test do
             squares: squares,
             turn: :black,
             en_passant_target: nil,
-            castling_rights: @full_castling_rights
+            castling_rights: @full_castling_rights,
+            white_king_location: nil,
+            black_king_location: nil
         }
-        assert Board.apply_move(state, {:a, 7}, {:a, 6}) != :invalid_move
-        assert Board.apply_move(state, {:a, 7}, {:a, 6}).turn == :white
+        assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}) != :invalid_move
+        assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}).turn == :white
     end
 end
