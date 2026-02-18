@@ -15,36 +15,25 @@ defmodule ClusterChess.Gameplay.State do
     @starting_position Fen.fen_to_map(@starting_fen_string)
 
     defstruct [
-        board: %Board{squares: @starting_position},
         history: [],
+        board: %Board{squares: @starting_position},
+        players: %{ white: nil, black: nil, spectators: MapSet.new(), },
+        ending:  %{ winner: nil, reason: nil },
+        pending: %{ offer_type: nil, requester: nil },
         clock: %{
             increment: 5,
-            game_start: DateTime.utc_now() |> DateTime.to_unix(),
+            game_start: nil,
             game_end: nil,
-            white_timeout_treshold: 5 * 60,
-            black_timeout_treshold: 5 * 60,
-        },
-        players: %{
-            white: "white_player",
-            black: "black_player",
-            spectators: MapSet.new(),
-        },
-        ending: %{
-            winner: nil,
-            reason: nil
-        },
-        pending: %{
-            offer_type: nil,
-            requester: nil
+            white_timeout_treshold: nil,
+            black_timeout_treshold: nil,
         }
     ]
 
     def apply_move(state, req) do
-        now = DateTime.utc_now() |> DateTime.to_unix()
         {from, to} = {req.from, req.to}
         out = MakeMoves.apply_move(state.board, from, to)
         {piece, color} = Map.get(state.board.squares, from, {nil, nil})
-        log = {:move, piece, color, from, to, now}
+        log = {:move, piece, color, from, to, now()}
         cond do
             out == :invalid_move       -> {:error, "invalid move"}
             state.ending.winner != nil -> {:error, "game already over"}
@@ -86,12 +75,11 @@ defmodule ClusterChess.Gameplay.State do
     end
 
     defp game_timed_out?(state) do
-        now = DateTime.utc_now() |> DateTime.to_unix()
         white_timeout = state.clock.white_timeout_treshold
         black_timeout = state.clock.black_timeout_treshold
         case {state.board.turn} do
-            {:white} when white_timeout != nil -> now > white_timeout
-            {:black} when black_timeout != nil -> now > black_timeout
+            {:white} when white_timeout != nil -> now() > white_timeout
+            {:black} when black_timeout != nil -> now() > black_timeout
             _ -> false
         end
     end
@@ -101,13 +89,12 @@ defmodule ClusterChess.Gameplay.State do
         and state.board.turn == player
 
     defp update_clock(state, req) do
-        now = DateTime.utc_now() |> DateTime.to_unix()
         increment = state.clock.increment || 0
         white_player = state.players.white
         black_player = state.players.black
         case req.uid do
-            ^white_player -> %{ state.clock | white_timeout_treshold: now + increment }
-            ^black_player -> %{ state.clock | black_timeout_treshold: now + increment }
+            ^white_player -> %{ state.clock | white_timeout_treshold: now() + increment }
+            ^black_player -> %{ state.clock | black_timeout_treshold: now() + increment }
             _other_player -> state.clock
         end
     end
@@ -122,6 +109,25 @@ defmodule ClusterChess.Gameplay.State do
             true -> @noending
         end
     end
+
+    def new(time, increment, white, black), do: %__MODULE__{
+        board: %Board{squares: @starting_position},
+        clock: %{
+            increment: increment,
+            game_start: now(),
+            game_end: nil,
+            white_timeout_treshold: now() + time,
+            black_timeout_treshold: now() + time,
+        },
+        players: %{
+            white: white,
+            black: black,
+            spectators: MapSet.new(),
+        },
+    }
+
+    def now(),
+        do: DateTime.utc_now() |> DateTime.to_unix()
 
     defp checkmate_ending!(ending, color),
         do: %{ ending | winner: color, reason: :checkmate }
