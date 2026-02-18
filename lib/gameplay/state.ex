@@ -25,8 +25,8 @@ defmodule ClusterChess.Gameplay.State do
             black_timeout_treshold: 5 * 60,
         },
         players: %{
-            white: nil,
-            black: nil,
+            white: "white_player",
+            black: "black_player",
             spectators: MapSet.new(),
         },
         ending: %{
@@ -41,7 +41,7 @@ defmodule ClusterChess.Gameplay.State do
 
     def apply_move(state, req) do
         now = DateTime.utc_now() |> DateTime.to_unix()
-        {from, to} = {req["from"], req["to"]}
+        {from, to} = {req.from, req.to}
         out = MakeMoves.apply_move(state.board, from, to)
         {piece, color} = Map.get(state.board.squares, from, {nil, nil})
         log = {:move, piece, color, from, to, now}
@@ -105,7 +105,7 @@ defmodule ClusterChess.Gameplay.State do
         increment = state.clock.increment || 0
         white_player = state.players.white
         black_player = state.players.black
-        case req["uid"] do
+        case req.uid do
             ^white_player -> %{ state.clock | white_timeout_treshold: now + increment }
             ^black_player -> %{ state.clock | black_timeout_treshold: now + increment }
             _other_player -> state.clock

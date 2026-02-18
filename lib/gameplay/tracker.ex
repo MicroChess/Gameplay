@@ -5,8 +5,8 @@ defmodule ClusterChess.Gameplay.Tracker do
 
     @impl GenServer
     def handle_call(datapack, from, state) do
-        request = Map.merge(datapack, %{ "from" => from })
-        case Map.fetch(request, "type") do
+        request = Map.merge(datapack, %{ :from => from })
+        case Map.fetch(request, :type) do
             {:ok, mtype} -> process(mtype, request, state)
             _ -> {:reply, :fatal, state}
         end
@@ -32,12 +32,12 @@ defmodule ClusterChess.Gameplay.Tracker do
     end
 
     defp process(type, req, state) do
-        state = update_spectators(state, req["from"])
+        state = update_spectators(state, req.from)
         {white, black} = {state.players.white, state.players.black}
         turn = if state.board.turn == :white,
             do: state.players.white,
             else: state.players.black
-        out = case {req["uid"], type} do
+        out = case {req.uid, type} do
             {^turn, "game.domove"}  -> State.apply_move(state, req)
             {^white, "game.draw"}   -> State.apply_draw(state, req)
             {^white, "game.resign"} -> State.apply_resign(state, req)
