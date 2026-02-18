@@ -13,25 +13,37 @@ defmodule ClusterChess.Gameplay.Tracker do
     end
 
     def notify_spectators(state) do
-        spectators = Map.get(state, :spectators, MapSet.new())
+        players = Map.get(state, :players, Map.new())
+        spectators = Map.get(players, :spectators, MapSet.new())
         Enum.each(spectators, fn spectator ->
-            send(spectator, {:forward, Jason.encode!(state.squares)})
+            send(spectator, {:game_update, state})
+        end)
+    end
+
+    def update_spectators(state, {pid, _ref}),
+        do: update_spectators(state, pid)
+
+    def update_spectators(state, from) do
+        update_in(state.players.spectators, fn set ->
+            old = set || MapSet.new()
+            expansion = MapSet.new([from])
+            MapSet.union(old, expansion)
         end)
     end
 
     defp process(type, req, state) do
-        state = State.update_spectators(state, req["from"])
-        {white, black} = {state.white_player, state.black_player}
+        state = update_spectators(state, req["from"])
+        {white, black} = {state.players.white, state.players.black}
         turn = if state.board.turn == :white,
-            do: state.white_player,
-            else: state.black_player
+            do: state.players.white,
+            else: state.players.black
         out = case {req["uid"], type} do
             {^turn, "game.domove"}  -> State.apply_move(state, req)
             {^white, "game.draw"}   -> State.apply_draw(state, req)
             {^white, "game.resign"} -> State.apply_resign(state, req)
             {^black, "game.draw"}   -> State.apply_draw(state, req)
             {^black, "game.resign"} -> State.apply_resign(state, req)
-            {_any, "game.spectate"} -> {:ok, req["uid"]}
+            {_any, "game.spectate"} -> {:ok, state}
             _unrecognized_msg_type  -> {:fatal, "unrecognized msg"}
         end
         with {:ok, new_state} <- out do

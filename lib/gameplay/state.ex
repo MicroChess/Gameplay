@@ -1,5 +1,6 @@
 defmodule ClusterChess.Gameplay.State do
 
+    alias ClusterChess.Gameplay.Fen
     alias ClusterChess.Rules.MakeMoves
     alias ClusterChess.Rules.Board
     alias ClusterChess.Rules.Utilities
@@ -10,15 +11,18 @@ defmodule ClusterChess.Gameplay.State do
     @black_resign %{ winner: :white, reason: :resignation }
     @stalemate %{ winner: :both, reason: :stalemate }
 
+    @starting_fen_string "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
+    @starting_position Fen.fen_to_map(@starting_fen_string)
+
     defstruct [
-        board: %{},
+        board: %Board{squares: @starting_position},
         history: [],
         clock: %{
-            increment: nil,
-            game_start: nil,
+            increment: 5,
+            game_start: DateTime.utc_now() |> DateTime.to_unix(),
             game_end: nil,
-            white_timeout_treshold: nil,
-            black_timeout_treshold: nil,
+            white_timeout_treshold: 5 * 60,
+            black_timeout_treshold: 5 * 60,
         },
         players: %{
             white: nil,
@@ -35,19 +39,12 @@ defmodule ClusterChess.Gameplay.State do
         }
     ]
 
-    def update_spectators(state, from) do
-        update_in(state.spectators, fn set ->
-            old = set || MapSet.new()
-            expansion = MapSet.new([from])
-            MapSet.union(old, expansion)
-        end)
-    end
-
     def apply_move(state, req) do
         now = DateTime.utc_now() |> DateTime.to_unix()
-        out = MakeMoves.apply_move(state.board, req.from, req.to)
-        {piece, color} = Map.get(state.board.squares, req.from, {nil, nil})
-        log = {:move, piece, color, req.from, req.to, now}
+        {from, to} = {req["from"], req["to"]}
+        out = MakeMoves.apply_move(state.board, from, to)
+        {piece, color} = Map.get(state.board.squares, from, {nil, nil})
+        log = {:move, piece, color, from, to, now}
         cond do
             out == :invalid_move       -> {:error, "invalid move"}
             state.ending.winner != nil -> {:error, "game already over"}
