@@ -1,14 +1,12 @@
 defmodule KubeChess.Match.State do
 
-    alias KubeChess.Game.MakeMoves
+    alias Bandit.Clock
     alias KubeChess.Game.Board
+    alias KubeChess.Match.Clock
     alias KubeChess.Game.Utilities
 
-    @nopending    %{ offer_type: nil, requester: nil       }
-    @noending     %{ winner: nil,     reason: nil          }
-    @white_resign %{ winner: :black,  reason: :resignation }
-    @black_resign %{ winner: :white,  reason: :resignation }
-    @stalemate    %{ winner: :both,   reason: :stalemate   }
+    @stalemate    %{ winner: :both,   reason: :stalemate }
+    @noending     %{ winner: nil,     reason: nil        }
 
     defstruct [
         history: [],
@@ -25,96 +23,9 @@ defmodule KubeChess.Match.State do
         }
     ]
 
-    def apply_move(state, req) do
-        {from, to} = {req.from, req.to}
-        out = MakeMoves.apply_move(state.board, from, to)
-        {piece, color} = Map.get(state.board.squares, from, {nil, nil})
-        log = {:move, piece, color, from, to, now()}
-        cond do
-            out == :invalid_move       -> {:error, "invalid move"}
-            state.ending.winner != nil -> {:error, "game already over"}
-            game_timed_out?(state)     -> {:error, "player timed out"}
-            true -> {:ok, %{state |
-                board:   out,
-                history: state.history ++ [log],
-                pending: @nopending,
-                clock:   update_clock(state, req),
-                ending:  update_ending(state, out)
-            }}
-        end
-    end
-
-    def apply_resign(state, req) do
-        white_player = state.players.white
-        black_player = state.players.black
-        cond do
-            state.ending.winner != nil -> {:error, "game already over"}
-            req.uid == white_player -> {:ok, %{state | ending: @white_resign}}
-            req.uid == black_player -> {:ok, %{state | ending: @black_resign}}
-            true -> {:error, "invalid resignation"}
-        end
-    end
-
-    def apply_draw(state, req) do
-        white_player = state.players.white
-        black_player = state.players.black
-        draw_req_ack = %{ state | pending: %{ offer_type: :draw, requester: req.uid } }
-        draw_accept = %{ state | pending: @nopending, ending: @stalemate }
-        cond do
-            req.uid not in [white_player, black_player] -> {:error, "forbidden: not a player"}
-            state.ending.winner != nil -> {:error, "game already over"}
-            state.pending.offer_type == nil -> {:ok, draw_req_ack }
-            state.pending.offer_type != :draw -> {:ok, draw_req_ack }
-            state.pending.requester != req.uid -> {:ok, draw_accept}
-            true -> {:error, "invalid draw offer"}
-        end
-    end
-
-    defp game_timed_out?(state) do
-        white_timeout = state.clock.white_timeout_treshold
-        black_timeout = state.clock.black_timeout_treshold
-        case {state.board.turn} do
-            {:white} when white_timeout != nil -> now() > white_timeout
-            {:black} when black_timeout != nil -> now() > black_timeout
-            _ -> false
-        end
-    end
-
-    defp player_timed_out?(state, player),
-        do: game_timed_out?(state)
-        and state.board.turn == player
-
-    defp update_clock(state, req) do
-        increment = state.clock.increment || 0
-        white_player = state.players.white
-        black_player = state.players.black
-        case req.uid do
-            ^white_player -> %{ state.clock | white_timeout_treshold: now() + increment }
-            ^black_player -> %{ state.clock | black_timeout_treshold: now() + increment }
-            _other_player -> state.clock
-        end
-    end
-
-    defp update_ending(state, board) do
-        color = state.board.turn
-        king_status = Board.king_status(board, color)
-        cond do
-            player_timed_out?(state, color) -> timeout_ending!(state.ending, color)
-            king_status == :checkmate -> checkmate_ending!(state.ending, color)
-            king_status == :stalemate -> @stalemate
-            true -> @noending
-        end
-    end
-
     def new(time, increment, white, black), do: %__MODULE__{
         board: %Board{},
-        clock: %{
-            increment: increment,
-            game_start: now(),
-            game_end: nil,
-            white_timeout_treshold: now() + time,
-            black_timeout_treshold: now() + time,
-        },
+        clock: Clock.new(time, increment),
         players: %{
             white: white,
             black: black,
@@ -122,12 +33,37 @@ defmodule KubeChess.Match.State do
         },
     }
 
-    def now(),
-        do: DateTime.utc_now() |> DateTime.to_unix()
+    def update_state(state, callback) do
+        updated = cond do
+            state.ending.winner != nil    -> {:error, "game finished"}
+            Clock.game_timed_out?(state)  -> {:error, "game timed out"}
+            true                          -> callback.(state)
+        end
+        case updated do
+            {:ok, new_state} -> {:ok, %{ new_state | ending: update_ending(new_state) }}
+            other -> other
+        end
+    end
 
-    defp checkmate_ending!(ending, color),
-        do: %{ ending | winner: color, reason: :checkmate }
+    def update_ending(state) do
+        {color, opponent} = { state.board.turn, Utilities.opponent(state.board.turn) }
+        checkmate_ending = %{ state.ending | winner: color, reason: :checkmate }
+        timeout_ending = %{ state.ending | winner: opponent, reason: :timeout }
+        king_status = Board.king_status(state.board, color)
+        cond do
+            Clock.player_timed_out?(state, color) -> timeout_ending
+            king_status == :checkmate -> checkmate_ending
+            king_status == :stalemate -> @stalemate
+            true -> @noending
+        end
+    end
 
-    defp timeout_ending!(ending, color),
-        do: %{ ending | winner: Utilities.opponent(color), reason: :timeout }
+    def player_color(state, uid) do
+        cond do
+            state.players.white == uid -> :white
+            state.players.black == uid -> :black
+            true -> nil
+        end
+    end
+
 end

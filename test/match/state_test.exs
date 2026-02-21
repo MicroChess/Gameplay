@@ -2,6 +2,7 @@ defmodule KubeChess.Match.State.Test do
 
     use ExUnit.Case
 
+    alias KubeChess.Match.DoMove
     alias KubeChess.Match.State
 
     @initial_state State.new(
@@ -26,18 +27,18 @@ defmodule KubeChess.Match.State.Test do
     }
 
     test "State ok [correctly handles first move]" do
-        assert {:ok, _state} = State.apply_move(@initial_state, @example_first_move_req)
+        assert {:ok, _state} = DoMove.apply_move(@initial_state, @example_first_move_req)
     end
 
     test "State ok [correctly handles first two moves]" do
         move1 = @example_first_move_req
         move2 = @example_second_move_req
-        assert {:ok, state_after_first_move_1} = State.apply_move(@initial_state, move1)
-        assert {:ok, _state} = State.apply_move(state_after_first_move_1, move2)
+        assert {:ok, state_after_first_move_1} = DoMove.apply_move(@initial_state, move1)
+        assert {:ok, _state} = DoMove.apply_move(state_after_first_move_1, move2)
     end
 
     test "State ok [correctly rejects invalid move]" do
         first_move_as_black = @example_second_move_req
-        assert {:error, _reason} = State.apply_move(@initial_state, first_move_as_black)
+        assert {:error, _reason} = DoMove.apply_move(@initial_state, first_move_as_black)
     end
 end
