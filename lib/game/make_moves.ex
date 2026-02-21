@@ -4,6 +4,7 @@ defmodule KubeChess.Game.MakeMoves do
     alias KubeChess.Game.Utilities
     alias KubeChess.Game.KingMoves
     alias KubeChess.Game.PawnMoves
+    alias KubeChess.Game.Utilities
 
     def apply_move(state, from, to) do
         cond do
@@ -28,7 +29,8 @@ defmodule KubeChess.Game.MakeMoves do
     end
 
     defp apply_en_passant(state, from, to) do
-        new = Map.delete(state.squares, state.en_passant_target)
+        target = Utilities.shift(state, from, {0, -1})
+        new = Map.delete(state.squares, target)
         tmp = %{state | squares: new}
         apply_normal_move(tmp, from, to)
     end
@@ -50,9 +52,10 @@ defmodule KubeChess.Game.MakeMoves do
         square = Map.get(state.squares, from, {nil, nil})
         piece = elem(square, 0)
         distance = Utilities.vertical_distance(from, to)
+        target = Utilities.shift(state, from, {0, 1})
         case {piece, distance} do
-            {:pawn, 2}  -> %{state | en_passant_target: to}
-            {:pawn, -2} -> %{state | en_passant_target: to}
+            {:pawn, 2}  -> %{state | en_passant_target: target}
+            {:pawn, -2} -> %{state | en_passant_target: target}
             _some_other -> %{state | en_passant_target: nil}
         end
     end

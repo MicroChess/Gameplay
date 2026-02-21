@@ -49,7 +49,7 @@ defmodule KubeChess.Game.Board.Test do
             black_king_location: nil
         }
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
-        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 4}).en_passant_target == {:a, 4}
+        assert MakeMoves.apply_move(state, {:a, 2}, {:a, 4}).en_passant_target == {:a, 3}
     end
 
     test "board move ok [illegal move, too far away]" do

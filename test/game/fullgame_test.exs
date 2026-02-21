@@ -56,11 +56,11 @@ defmodule KubeChess.Game.FullGame.Test do
 
         m1 = MakeMoves.apply_move(board, {:e, 2}, {:e, 4})
         assert_expected_postmove_situation(m1, :black)
-        assert m1.en_passant_target == {:e, 4}
+        assert m1.en_passant_target == {:e, 3}
 
         m2 = MakeMoves.apply_move(m1, {:e, 7}, {:e, 5})
         assert_expected_postmove_situation(m2, :white)
-        assert m2.en_passant_target == {:e, 5}
+        assert m2.en_passant_target == {:e, 6}
 
         m3 = MakeMoves.apply_move(m2, {:d, 1}, {:h, 5})
         assert_expected_postmove_situation(m3, :black)

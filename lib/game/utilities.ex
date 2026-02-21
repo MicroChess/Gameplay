@@ -57,7 +57,7 @@ defmodule KubeChess.Game.Utilities do
     def shift(state, {f, r}, {x, y}) do
         case color(state.squares, {f, r}) do
             :white -> {List.to_atom([?a + intify(f) + x]), r + y}
-            :black -> {List.to_atom([?a + intify(f) - x]), r - y}
+            :black -> {List.to_atom([?a + intify(f) + x]), r - y}
             _ -> {f, r}
         end
     end
