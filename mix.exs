@@ -23,7 +23,7 @@ defmodule KubeChess.Build do
     def application do
         [
             extra_applications: [:logger],
-            mod: {KubeChess.Main.Startup, []}
+            mod: {KubeChess.Commons.Startup, []}
         ]
     end
 end

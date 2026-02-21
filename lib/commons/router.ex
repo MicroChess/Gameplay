@@ -1,4 +1,4 @@
-defmodule KubeChess.Main.Router do
+defmodule KubeChess.Commons.Router do
 
     use Plug.Router
 
