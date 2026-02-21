@@ -1,8 +1,8 @@
-defmodule KubeChess.Match.Fen.Test do
+defmodule KubeChess.Game.Fen.Test do
 
     use ExUnit.Case
 
-    alias KubeChess.Match.Fen
+    alias KubeChess.Game.Fen
 
     test "FEN parsing of the starting position" do
         board = %{
