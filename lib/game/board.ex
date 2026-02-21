@@ -9,12 +9,33 @@ defmodule KubeChess.Game.Board do
     alias KubeChess.Game.MakeMoves
 
     defstruct [
-        squares: %{},
+        squares: %{
+             {:a, 1} => {:rook,   :white}, {:a, 2} => {:pawn, :white},
+             {:b, 1} => {:knight, :white}, {:c, 2} => {:pawn, :white},
+             {:c, 1} => {:bishop, :white}, {:e, 2} => {:pawn, :white},
+             {:d, 1} => {:queen,  :white}, {:g, 2} => {:pawn, :white},
+             {:e, 1} => {:king,   :white}, {:b, 2} => {:pawn, :white},
+             {:f, 1} => {:bishop, :white}, {:d, 2} => {:pawn, :white},
+             {:g, 1} => {:knight, :white}, {:f, 2} => {:pawn, :white},
+             {:h, 1} => {:rook,   :white}, {:h, 2} => {:pawn, :white},
+             {:a, 8} => {:rook,   :black}, {:a, 7} => {:pawn, :black},
+             {:b, 8} => {:knight, :black}, {:c, 7} => {:pawn, :black},
+             {:c, 8} => {:bishop, :black}, {:e, 7} => {:pawn, :black},
+             {:d, 8} => {:queen,  :black}, {:g, 7} => {:pawn, :black},
+             {:e, 8} => {:king,   :black}, {:b, 7} => {:pawn, :black},
+             {:f, 8} => {:bishop, :black}, {:d, 7} => {:pawn, :black},
+             {:g, 8} => {:knight, :black}, {:f, 7} => {:pawn, :black},
+             {:h, 8} => {:rook,   :black}, {:h, 7} => {:pawn, :black},
+        },
         castling_rights: %{
             white_lx: true,
             white_sx: true,
             black_lx: true,
             black_sx: true
+        },
+        counters: %{
+            halfmoves: 0,
+            fullmoves: 1
         },
         white_king_location: {:e, 1},
         black_king_location: {:e, 8},

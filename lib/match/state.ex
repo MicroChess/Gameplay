@@ -1,6 +1,5 @@
 defmodule KubeChess.Match.State do
 
-    alias KubeChess.Match.Fen
     alias KubeChess.Game.MakeMoves
     alias KubeChess.Game.Board
     alias KubeChess.Game.Utilities
@@ -11,12 +10,9 @@ defmodule KubeChess.Match.State do
     @black_resign %{ winner: :white,  reason: :resignation }
     @stalemate    %{ winner: :both,   reason: :stalemate   }
 
-    @starting_fen_string "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w"
-    @starting_position Fen.fen_to_map(@starting_fen_string)
-
     defstruct [
         history: [],
-        board:   %Board{squares: @starting_position},
+        board:   %Board{},
         players: %{ white: nil, black: nil, spectators: MapSet.new(), },
         ending:  %{ winner: nil, reason: nil },
         pending: %{ offer_type: nil, requester: nil },
@@ -111,7 +107,7 @@ defmodule KubeChess.Match.State do
     end
 
     def new(time, increment, white, black), do: %__MODULE__{
-        board: %Board{squares: @starting_position},
+        board: %Board{},
         clock: %{
             increment: increment,
             game_start: now(),
