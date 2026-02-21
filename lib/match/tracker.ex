@@ -1,8 +1,8 @@
-defmodule KubeChess.Gameplay.Tracker do
+defmodule KubeChess.Match.Tracker do
 
     @behaviour GenServer
 
-    alias KubeChess.Gameplay.State
+    alias KubeChess.Match.State
 
     @impl GenServer
     def init(state) do

@@ -1,7 +1,7 @@
-defmodule KubeChess.Rules.Board.Test do
+defmodule KubeChess.Game.Board.Test do
     use ExUnit.Case
 
-    alias KubeChess.Rules.MakeMoves
+    alias KubeChess.Game.MakeMoves
 
     @full_castling_rights %{
         white_kingside:  true,

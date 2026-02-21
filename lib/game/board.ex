@@ -1,12 +1,12 @@
-defmodule KubeChess.Rules.Board do
+defmodule KubeChess.Game.Board do
 
-    alias KubeChess.Rules.KingMoves
-    alias KubeChess.Rules.QueenMoves
-    alias KubeChess.Rules.RookMoves
-    alias KubeChess.Rules.BishopMoves
-    alias KubeChess.Rules.PawnMoves
-    alias KubeChess.Rules.KnightMoves
-    alias KubeChess.Rules.MakeMoves
+    alias KubeChess.Game.KingMoves
+    alias KubeChess.Game.QueenMoves
+    alias KubeChess.Game.RookMoves
+    alias KubeChess.Game.BishopMoves
+    alias KubeChess.Game.PawnMoves
+    alias KubeChess.Game.KnightMoves
+    alias KubeChess.Game.MakeMoves
 
     defstruct [
         squares: %{},

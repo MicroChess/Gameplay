@@ -1,7 +1,7 @@
-defmodule KubeChess.Rules.King.Test do
+defmodule KubeChess.Game.King.Test do
     use ExUnit.Case
 
-    alias KubeChess.Rules.KingMoves
+    alias KubeChess.Game.KingMoves
 
     test "king move ok [push, a2 -> a3, no capture]" do
         squares = %{ {:a, 2} => {:king, :white} }

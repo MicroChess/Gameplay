@@ -1,4 +1,4 @@
-defmodule KubeChess.Gameplay.Fen do
+defmodule KubeChess.Match.Fen do
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 

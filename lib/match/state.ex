@@ -1,9 +1,9 @@
-defmodule KubeChess.Gameplay.State do
+defmodule KubeChess.Match.State do
 
-    alias KubeChess.Gameplay.Fen
-    alias KubeChess.Rules.MakeMoves
-    alias KubeChess.Rules.Board
-    alias KubeChess.Rules.Utilities
+    alias KubeChess.Match.Fen
+    alias KubeChess.Game.MakeMoves
+    alias KubeChess.Game.Board
+    alias KubeChess.Game.Utilities
 
     @nopending    %{ offer_type: nil, requester: nil       }
     @noending     %{ winner: nil,     reason: nil          }

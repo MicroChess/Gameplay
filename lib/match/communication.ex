@@ -1,4 +1,4 @@
-defmodule KubeChess.Gameplay.DoMove do
+defmodule KubeChess.Match.Communication do
 
     @derive Jason.Encoder
     defstruct [
@@ -6,8 +6,5 @@ defmodule KubeChess.Gameplay.DoMove do
         :token,
         :game,
         :count,
-        :from,
-        :to,
-        :promotion
     ]
 end

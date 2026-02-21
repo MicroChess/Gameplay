@@ -1,10 +1,10 @@
-defmodule KubeChess.Gameplay.Tracker.Test do
+defmodule KubeChess.Match.Tracker.Test do
 
     use ExUnit.Case
 
-    alias KubeChess.Gameplay.Tracker
+    alias KubeChess.Match.Tracker
     alias KubeChess.Commons.Sentinel
-    alias KubeChess.Gameplay.State
+    alias KubeChess.Match.State
 
     @messages_used_for_subscription 1
 
