@@ -1,6 +1,6 @@
-defmodule ClusterChess.Rules.PawnMoves do
+defmodule KubeChess.Rules.PawnMoves do
 
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Rules.Utilities
 
     def legal_moves(board, from) do
         ms = for x <- -1..1, y <- 1..2, do:

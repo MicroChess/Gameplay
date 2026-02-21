@@ -1,8 +1,8 @@
-defmodule ClusterChess.Gameplay.State.Test do
+defmodule KubeChess.Gameplay.State.Test do
 
     use ExUnit.Case
 
-    alias ClusterChess.Gameplay.State
+    alias KubeChess.Gameplay.State
 
     @initial_state State.new(
         60 * 10,          # 10 minutes

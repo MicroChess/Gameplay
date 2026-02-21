@@ -1,6 +1,6 @@
-defmodule ClusterChess.Rules.KnightMoves do
+defmodule KubeChess.Rules.KnightMoves do
 
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Rules.Utilities
 
     def legal_moves(board, from) do
         ms = for x <- -2..2, y <- -2..2, x != y, x != 0, y != 0, do:

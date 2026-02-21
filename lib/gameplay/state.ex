@@ -1,9 +1,9 @@
-defmodule ClusterChess.Gameplay.State do
+defmodule KubeChess.Gameplay.State do
 
-    alias ClusterChess.Gameplay.Fen
-    alias ClusterChess.Rules.MakeMoves
-    alias ClusterChess.Rules.Board
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Gameplay.Fen
+    alias KubeChess.Rules.MakeMoves
+    alias KubeChess.Rules.Board
+    alias KubeChess.Rules.Utilities
 
     @nopending %{ offer_type: nil, requester: nil }
     @noending %{ winner: nil, reason: nil }

@@ -1,4 +1,4 @@
-defmodule ClusterChess.Commons.Sentinel do
+defmodule KubeChess.Commons.Sentinel do
     @behaviour GenServer
 
     @impl GenServer

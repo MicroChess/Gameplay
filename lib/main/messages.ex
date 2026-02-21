@@ -1,4 +1,4 @@
-defmodule ClusterChess.Main.Messaging do
+defmodule KubeChess.Main.Messaging do
 
     def summon_and_delegate(module, msg, opts),
         do: summon_and_delegate(module, msg, opts, opts)

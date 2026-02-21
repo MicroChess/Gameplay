@@ -1,6 +1,6 @@
-defmodule ClusterChess.Rules.QueenMoves do
+defmodule KubeChess.Rules.QueenMoves do
 
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Rules.Utilities
 
     def legal_moves(board, from) do
         hz = for x <- -7..7, do: Utilities.shift(board, from, {x, 0})

@@ -1,18 +1,18 @@
-defmodule ClusterChess.Gameplay.Socket do
+defmodule KubeChess.Gameplay.Socket do
 
-    use ClusterChess.Commons.Socket
+    use KubeChess.Commons.Socket
 
-    alias ClusterChess.Commons.Validation
-    alias ClusterChess.Commons.Formatting
-    alias ClusterChess.Main.Messaging
-    alias ClusterChess.Gameplay.Tracker
+    alias KubeChess.Commons.Validation
+    alias KubeChess.Commons.Formatting
+    alias KubeChess.Main.Messaging
+    alias KubeChess.Gameplay.Tracker
 
     @shapes %{
-        "game.domove" => ClusterChess.Gameplay.DoMove,
-        "game.undo" => ClusterChess.Gameplay.Communication,
-        "game.draw" => ClusterChess.Gameplay.Communication,
-        "game.resign" => ClusterChess.Gameplay.Communication,
-        "game.spectate" => ClusterChess.Gameplay.Communication
+        "game.domove" => KubeChess.Gameplay.DoMove,
+        "game.undo" => KubeChess.Gameplay.Communication,
+        "game.draw" => KubeChess.Gameplay.Communication,
+        "game.resign" => KubeChess.Gameplay.Communication,
+        "game.spectate" => KubeChess.Gameplay.Communication
     }
 
     @impl WebSock

@@ -1,7 +1,7 @@
-defmodule ClusterChess.Rules.CheckMates.Test do
+defmodule KubeChess.Rules.CheckMates.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.Board
+    alias KubeChess.Rules.Board
 
     @full_castling_rights %{
         white_kingside:  true,

@@ -1,4 +1,4 @@
-defmodule ClusterChess.Commons.Datapack do
+defmodule KubeChess.Commons.Datapack do
 
     @type outcome()
         :: {:ok, struct()}
@@ -9,10 +9,10 @@ defmodule ClusterChess.Commons.Datapack do
 
     defmacro __using__(_opts) do
         quote do
-            @behaviour ClusterChess.Commons.Datapack
-            alias ClusterChess.Commons.Formatting
+            @behaviour KubeChess.Commons.Datapack
+            alias KubeChess.Commons.Formatting
 
-            @impl ClusterChess.Commons.Datapack
+            @impl KubeChess.Commons.Datapack
             def enforce(data) do
                 atomic_data = Formatting.atomize(__MODULE__, data)
                 atomic_keys = Formatting.atom_keys(__MODULE__)

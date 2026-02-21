@@ -1,7 +1,7 @@
-defmodule ClusterChess.Rules.KingMoves do
+defmodule KubeChess.Rules.KingMoves do
 
-    alias ClusterChess.Rules.Board
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Rules.Board
+    alias KubeChess.Rules.Utilities
 
     def legal_moves(board, from) do
         castlings = [{:c, 1}, {:g, 1}, {:c, 8}, {:g, 8}]

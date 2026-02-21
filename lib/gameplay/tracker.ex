@@ -1,7 +1,7 @@
-defmodule ClusterChess.Gameplay.Tracker do
+defmodule KubeChess.Gameplay.Tracker do
 
-    use ClusterChess.Commons.Service
-    alias ClusterChess.Gameplay.State
+    use KubeChess.Commons.Service
+    alias KubeChess.Gameplay.State
 
     @impl GenServer
     def handle_call(datapack, sender, state) do

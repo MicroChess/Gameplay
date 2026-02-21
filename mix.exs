@@ -1,4 +1,4 @@
-defmodule ClusterChess.Build do
+defmodule KubeChess.Build do
     use Mix.Project
 
     def project do
@@ -23,7 +23,7 @@ defmodule ClusterChess.Build do
     def application do
         [
             extra_applications: [:logger],
-            mod: {ClusterChess.Main.Startup, []}
+            mod: {KubeChess.Main.Startup, []}
         ]
     end
 end

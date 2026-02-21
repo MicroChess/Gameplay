@@ -1,4 +1,4 @@
-defmodule ClusterChess.Commons.Service do
+defmodule KubeChess.Commons.Service do
     defmacro __using__(_opts) do
         quote do
             @behaviour GenServer

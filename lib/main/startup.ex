@@ -1,4 +1,4 @@
-defmodule ClusterChess.Main.Startup do
+defmodule KubeChess.Main.Startup do
 
     use Application
 
@@ -30,7 +30,7 @@ defmodule ClusterChess.Main.Startup do
             ]},
             {Bandit, [
                 port: String.to_integer(System.get_env("port", "4000")),
-                plug: ClusterChess.Main.Router,
+                plug: KubeChess.Main.Router,
                 ip: {0, 0, 0, 0}
             ]}
         ]

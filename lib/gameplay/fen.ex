@@ -1,4 +1,4 @@
-defmodule ClusterChess.Gameplay.Fen do
+defmodule KubeChess.Gameplay.Fen do
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 

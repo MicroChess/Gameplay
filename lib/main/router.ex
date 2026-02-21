@@ -1,10 +1,10 @@
-defmodule ClusterChess.Main.Router do
+defmodule KubeChess.Main.Router do
 
     use Plug.Router
 
     alias Plug.Conn
-    alias ClusterChess.Sockets.Matchmaking
-    alias ClusterChess.Commons.Validation
+    alias KubeChess.Sockets.Matchmaking
+    alias KubeChess.Commons.Validation
 
     plug :match
     plug :dispatch

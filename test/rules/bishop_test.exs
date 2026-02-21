@@ -1,7 +1,7 @@
-defmodule ClusterChess.Rules.Bishops.Test do
+defmodule KubeChess.Rules.Bishops.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.BishopMoves
+    alias KubeChess.Rules.BishopMoves
 
     test "bishop move ok [//, a1 -> d4, no capture]" do
         squares = %{ {:a, 1} => {:bishop, :white} }

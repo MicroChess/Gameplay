@@ -1,6 +1,6 @@
-defmodule ClusterChess.Rules.BishopMoves do
+defmodule KubeChess.Rules.BishopMoves do
 
-    alias ClusterChess.Rules.Utilities
+    alias KubeChess.Rules.Utilities
 
     def legal_moves(board, from) do
         diag1 = for x <- -7..7, do: Utilities.shift(board, from, {x, x})

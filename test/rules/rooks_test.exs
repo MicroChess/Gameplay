@@ -1,7 +1,7 @@
-defmodule ClusterChess.Rules.Rooks.Test do
+defmodule KubeChess.Rules.Rooks.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.RookMoves
+    alias KubeChess.Rules.RookMoves
 
     test "Rook move ok [horizontal, a1 -> d1, no capture]" do
         squares = %{ {:a, 1} => {:rook, :white} }

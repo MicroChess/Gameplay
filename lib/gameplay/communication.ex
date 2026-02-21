@@ -1,6 +1,6 @@
-defmodule ClusterChess.Gameplay.Communication do
+defmodule KubeChess.Gameplay.Communication do
 
-    use ClusterChess.Commons.Datapack
+    use KubeChess.Commons.Datapack
 
     @derive Jason.Encoder
     defstruct [
@@ -10,7 +10,7 @@ defmodule ClusterChess.Gameplay.Communication do
         :count,
     ]
 
-    @impl ClusterChess.Commons.Datapack
+    @impl KubeChess.Commons.Datapack
     def id(self),
         do: self.count |>
           Integer.to_string()

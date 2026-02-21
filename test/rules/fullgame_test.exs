@@ -1,8 +1,8 @@
-defmodule ClusterChess.Rules.FullGame.Test do
+defmodule KubeChess.Rules.FullGame.Test do
     use ExUnit.Case
 
-    alias ClusterChess.Rules.MakeMoves
-    alias ClusterChess.Rules.Board
+    alias KubeChess.Rules.MakeMoves
+    alias KubeChess.Rules.Board
 
     @full_castling_rights %{
         white_kingside:  true,
