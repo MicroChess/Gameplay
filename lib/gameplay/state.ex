@@ -16,7 +16,7 @@ defmodule KubeChess.Gameplay.State do
 
     defstruct [
         history: [],
-        board: %Board{squares: @starting_position},
+        board:   %Board{squares: @starting_position},
         players: %{ white: nil, black: nil, spectators: MapSet.new(), },
         ending:  %{ winner: nil, reason: nil },
         pending: %{ offer_type: nil, requester: nil },
