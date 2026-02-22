@@ -1,9 +1,9 @@
-defmodule KubeChess.Match.State do
+defmodule Match.State do
 
     alias Bandit.Clock
-    alias KubeChess.Game.Board
-    alias KubeChess.Match.Clock
-    alias KubeChess.Game.Utilities
+    alias Game.Board
+    alias Match.Clock
+    alias Game.Utilities
 
     @stalemate    %{ winner: :both,   reason: :stalemate }
     @noending     %{ winner: nil,     reason: nil        }

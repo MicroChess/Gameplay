@@ -1,4 +1,4 @@
-defmodule KubeChess.Commons.Startup do
+defmodule Commons.Startup do
 
     use Application
 
@@ -30,7 +30,7 @@ defmodule KubeChess.Commons.Startup do
             ]},
             {Bandit, [
                 port: String.to_integer(System.get_env("port", "4000")),
-                plug: KubeChess.Commons.Router,
+                plug: Commons.Router,
                 ip: {0, 0, 0, 0}
             ]}
         ]

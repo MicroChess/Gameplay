@@ -1,7 +1,7 @@
-defmodule KubeChess.Game.Knights.Test do
+defmodule Game.Knights.Test do
     use ExUnit.Case
 
-    alias KubeChess.Game.KnightMoves
+    alias Game.KnightMoves
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
     @ranks [1, 2, 3, 4, 5, 6, 7, 8]

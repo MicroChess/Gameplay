@@ -1,7 +1,7 @@
-defmodule KubeChess.Match.DoMove do
+defmodule Match.DoMove do
 
-    alias KubeChess.Game.MakeMoves
-    alias KubeChess.Match.State
+    alias Game.MakeMoves
+    alias Match.State
 
     @nopending %{ offer_type: nil, requester: nil }
 

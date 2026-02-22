@@ -1,4 +1,4 @@
-defmodule KubeChess.Commons.Messaging do
+defmodule Commons.Messaging do
 
     def summon_and_delegate(module, msg, opts),
         do: summon_and_delegate(module, msg, opts, opts)

@@ -1,6 +1,6 @@
-defmodule KubeChess.Match.Draw do
+defmodule Match.Draw do
 
-    alias KubeChess.Match.State
+    alias Match.State
 
     @stalemate    %{ winner: :both,   reason: :stalemate }
     @nopending    %{ offer_type: nil, requester: nil     }

@@ -1,17 +1,17 @@
-defmodule KubeChess.Match.Socket do
+defmodule Match.Socket do
 
     @behaviour WebSock
 
-    alias KubeChess.Commons.Formatting
-    alias KubeChess.Commons.Messaging
-    alias KubeChess.Match.Tracker
+    alias Commons.Formatting
+    alias Commons.Messaging
+    alias Match.Tracker
 
     @shapes %{
-        "game.domove" => KubeChess.Match.DoMove,
-        "game.undo" => KubeChess.Match.Communication,
-        "game.draw" => KubeChess.Match.Communication,
-        "game.resign" => KubeChess.Match.Communication,
-        "game.spectate" => KubeChess.Match.Communication
+        "game.domove" => Match.DoMove,
+        "game.undo" => Match.Communication,
+        "game.draw" => Match.Communication,
+        "game.resign" => Match.Communication,
+        "game.spectate" => Match.Communication
     }
 
     @impl WebSock

@@ -1,10 +1,10 @@
-defmodule KubeChess.Commons.Router do
+defmodule Commons.Router do
 
     use Plug.Router
 
     alias Plug.Conn
-    alias KubeChess.Sockets.Matchmaking
-    alias KubeChess.Commons.Validation
+    alias Sockets.Matchmaking
+    alias Commons.Validation
 
     plug :match
     plug :dispatch

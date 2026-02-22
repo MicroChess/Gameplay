@@ -1,7 +1,7 @@
-defmodule KubeChess.Game.Rooks.Test do
+defmodule Game.Rooks.Test do
     use ExUnit.Case
 
-    alias KubeChess.Game.RookMoves
+    alias Game.RookMoves
 
     test "Rook move ok [horizontal, a1 -> d1, no capture]" do
         squares = %{ {:a, 1} => {:rook, :white} }

@@ -1,10 +1,10 @@
-defmodule KubeChess.Game.MakeMoves do
+defmodule Game.MakeMoves do
 
-    alias KubeChess.Game.Board
-    alias KubeChess.Game.Utilities
-    alias KubeChess.Game.KingMoves
-    alias KubeChess.Game.PawnMoves
-    alias KubeChess.Game.Utilities
+    alias Game.Board
+    alias Game.Utilities
+    alias Game.KingMoves
+    alias Game.PawnMoves
+    alias Game.Utilities
 
     def apply_move(state, from, to) do
         cond do

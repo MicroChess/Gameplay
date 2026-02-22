@@ -1,6 +1,6 @@
-defmodule KubeChess.Game.KnightMoves do
+defmodule Game.KnightMoves do
 
-    alias KubeChess.Game.Utilities
+    alias Game.Utilities
 
     def legal_moves(board, from) do
         ms = for x <- -2..2, y <- -2..2, x != y, x != 0, y != 0, do:

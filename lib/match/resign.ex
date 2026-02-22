@@ -1,6 +1,6 @@
-defmodule KubeChess.Match.Resign do
+defmodule Match.Resign do
 
-    alias KubeChess.Match.State
+    alias Match.State
 
     @derive Jason.Encoder
     defstruct [

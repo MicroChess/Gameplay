@@ -1,7 +1,7 @@
-defmodule KubeChess.Game.Pawns.Test do
+defmodule Game.Pawns.Test do
     use ExUnit.Case
 
-    alias KubeChess.Game.PawnMoves
+    alias Game.PawnMoves
 
     test "pawn move ok [push, a2 -> a3, no capture]" do
         squares = %{ {:a, 2} => {:pawn, :white} }

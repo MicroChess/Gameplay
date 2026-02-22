@@ -1,4 +1,4 @@
-defmodule KubeChess.Commons.Formatting do
+defmodule Commons.Formatting do
     import String, only: [to_atom: 1]
 
     def contains(list, item) do

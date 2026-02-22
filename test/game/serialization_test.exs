@@ -1,9 +1,9 @@
-defmodule KubeChess.Game.Serialization.Test do
+defmodule Game.Serialization.Test do
 
     use ExUnit.Case
 
-    alias KubeChess.Game.Board
-    alias KubeChess.Game.Serialization
+    alias Game.Board
+    alias Game.Serialization
 
     test "FEN parsing of the starting position" do
         fen = Serialization.encode_fen(%Board{})

@@ -1,6 +1,6 @@
-defmodule KubeChess.Game.Deserialization do
+defmodule Game.Deserialization do
 
-    alias KubeChess.Game.Board
+    alias Game.Board
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 

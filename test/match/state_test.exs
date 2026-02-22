@@ -1,9 +1,9 @@
-defmodule KubeChess.Match.State.Test do
+defmodule Match.State.Test do
 
     use ExUnit.Case
 
-    alias KubeChess.Match.DoMove
-    alias KubeChess.Match.State
+    alias Match.DoMove
+    alias Match.State
 
     @initial_state State.new(
         60 * 10,          # 10 minutes

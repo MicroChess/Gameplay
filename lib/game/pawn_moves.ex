@@ -1,6 +1,6 @@
-defmodule KubeChess.Game.PawnMoves do
+defmodule Game.PawnMoves do
 
-    alias KubeChess.Game.Utilities
+    alias Game.Utilities
 
     def legal_moves(board, from) do
         ms = for x <- -1..1, y <- 1..2, do:

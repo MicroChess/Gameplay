@@ -1,4 +1,4 @@
-defmodule KubeChess.Match.Clock do
+defmodule Match.Clock do
 
     defstruct [
         increment: 5,

@@ -1,7 +1,7 @@
-defmodule KubeChess.Game.Bishops.Test do
+defmodule Game.Bishops.Test do
     use ExUnit.Case
 
-    alias KubeChess.Game.BishopMoves
+    alias Game.BishopMoves
 
     test "bishop move ok [//, a1 -> d4, no capture]" do
         squares = %{ {:a, 1} => {:bishop, :white} }

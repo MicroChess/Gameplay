@@ -1,10 +1,10 @@
-defmodule KubeChess.Match.Tracker do
+defmodule Match.Tracker do
 
     @behaviour GenServer
 
-    alias KubeChess.Match.DoMove
-    alias KubeChess.Match.Draw
-    alias KubeChess.Match.Resign
+    alias Match.DoMove
+    alias Match.Draw
+    alias Match.Resign
 
     @impl GenServer
     def init(state) do

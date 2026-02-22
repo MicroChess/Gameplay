@@ -1,4 +1,4 @@
-defmodule KubeChess.Game.Serialization do
+defmodule Game.Serialization do
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 
