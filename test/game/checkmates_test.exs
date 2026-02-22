@@ -4,10 +4,10 @@ defmodule Game.CheckMates.Test do
     alias Game.Board
 
     @full_castling_rights %{
-        white_kingside:  true,
-        white_queenside: true,
-        black_kingside:  true,
-        black_queenside: true
+        white_lx:  true,
+        white_rx: true,
+        black_lx:  true,
+        black_rx: true
     }
 
     test "board move ok [checkmate by knight]" do
@@ -24,7 +24,8 @@ defmodule Game.CheckMates.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:h, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert Board.king_status(state, :white) == :checkmate
     end
@@ -41,7 +42,8 @@ defmodule Game.CheckMates.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:h, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert Board.king_status(state, :white) == :stalemate
     end
@@ -57,7 +59,8 @@ defmodule Game.CheckMates.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:h, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert Board.king_status(state, :white) == :safe
     end
@@ -75,7 +78,8 @@ defmodule Game.CheckMates.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:h, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert Board.king_status(state, :white) == :safe
     end

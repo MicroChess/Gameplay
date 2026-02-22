@@ -27,27 +27,27 @@ defmodule Game.King.Test do
         assert not KingMoves.valid_move?(state, {:b, 2}, {:b, 4})
     end
 
-    test "king move ok [push, queenside castling, no checks, white]" do
+    test "king move ok [push, rx castling, no checks, white]" do
         squares = %{ {:e, 1} => {:king, :white} }
-        state = %{squares: squares, castling_rights: %{white_queenside: true}}
+        state = %{squares: squares, castling_rights: %{white_rx: true}}
         assert KingMoves.valid_move?(state, {:e, 1}, {:c, 1})
     end
 
-    test "king move ok [push, queenside castling, forbidden]" do
+    test "king move ok [push, rx castling, forbidden]" do
         squares = %{ {:e, 1} => {:king, :white} }
-        state = %{squares: squares, castling_rights: %{white_queenside: false}}
+        state = %{squares: squares, castling_rights: %{white_rx: false}}
         assert not KingMoves.valid_move?(state, {:e, 1}, {:c, 1})
     end
 
-    test "king move ok [push, queenside castling, with check]" do
+    test "king move ok [push, rx castling, with check]" do
         squares = %{ {:e, 1} => {:king, :white}, {:d, 2} => {:rook, :black} }
-        state = %{squares: squares, castling_rights: %{white_queenside: true}}
+        state = %{squares: squares, castling_rights: %{white_rx: true}}
         assert not KingMoves.valid_move?(state, {:e, 1}, {:c, 1})
     end
 
-    test "king move ok [push, queenside castling, with check 2]" do
+    test "king move ok [push, rx castling, with check 2]" do
         squares = %{ {:e, 1} => {:king, :white}, {:b, 2} => {:rook, :black} }
-        state = %{squares: squares, castling_rights: %{white_queenside: true}}
+        state = %{squares: squares, castling_rights: %{white_rx: true}}
         assert KingMoves.valid_move?(state, {:e, 1}, {:c, 1})
     end
 end

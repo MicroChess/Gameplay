@@ -5,82 +5,49 @@ defmodule Game.MakeMoves do
     alias Game.KingMoves
     alias Game.PawnMoves
     alias Game.Utilities
+    alias Game.MakeUpdates
 
-    def apply_move(state, from, to) do
+    def apply_move(board, from, to, promotion \\ nil) do
         cond do
-            Utilities.color(state.squares, from) != state.turn -> :invalid_move
-            PawnMoves.valid_en_passant?(state, from, to) -> apply_en_passant(state, from, to)
-            KingMoves.valid_castling?(state, from, to) -> apply_castling(state, from, to)
-            Board.valid_move?(state, from, to) -> apply_normal_move(state, from, to)
+            Utilities.color(board.squares, from) != board.turn -> :invalid_move
+            PawnMoves.valid_en_passant?(board, from, to) -> apply_en_passant(board, from, to)
+            KingMoves.valid_castling?(board, from, to) -> apply_castling(board, from, to)
+            Board.valid_move?(board, from, to) -> apply_normal_move(board, from, to)
             true -> :invalid_move
         end
     end
 
-    defp apply_castling(state, from, to) do
-        {rook_from, rook_to} = case to do
-            {:c, 1} -> {{:a, 1}, {:d, 1}}
-            {:g, 1} -> {{:h, 1}, {:f, 1}}
-            {:c, 8} -> {{:a, 8}, {:d, 8}}
-            {:g, 8} -> {{:h, 8}, {:f, 8}}
+    def apply_castling(board, from, to) do
+        board = MakeUpdates.update_all(board, from, to)
+        color = Utilities.color(board.squares, from)
+        {rook_from, rook_to} = case {color, to} do
+            {:white, {:g, 1}} -> {{:h, 1}, {:f, 1}}
+            {:white, {:c, 1}} -> {{:a, 1}, {:d, 1}}
+            {:black, {:g, 8}} -> {{:h, 8}, {:f, 8}}
+            {:black, {:c, 8}} -> {{:a, 8}, {:d, 8}}
         end
-        %{state | turn: Utilities.opponent(state.turn)}
-        |> apply_normal_move(from, to)
-        |> apply_normal_move(rook_from, rook_to)
+        squares = %{ board.squares | from => nil, rook_from => nil }
+             |> Map.put(to, {:king, color})
+             |> Map.put(rook_to, {:rook, color})
+        %{ board | squares: squares }
     end
 
-    defp apply_en_passant(state, from, to) do
-        target = Utilities.shift(state, from, {0, -1})
-        new = Map.delete(state.squares, target)
-        tmp = %{state | squares: new}
-        apply_normal_move(tmp, from, to)
+    def apply_en_passant(board, from, to) do
+        board = MakeUpdates.update_all(board, from, to)
+        piece = Map.get(board.squares, from)
+        target = Utilities.shift(board, to, {0, 1})
+        squares = Map.put(board.squares, to, piece)
+            |> Map.delete(target)
+            |> Map.delete(from)
+        %{ board | squares: squares }
     end
 
-    defp apply_normal_move(state, from, to) do
-        piece = Map.get(state.squares, from)
-        new_squares = state.squares
-        |> Map.delete(from)
-        |> Map.put(to, piece)
-        opponent = Utilities.opponent(state.turn)
-        update_en_passant_target(state, from, to)
-        |> update_castling_rights(from, to)
-        |> update_king_location(from, to)
-        |> Map.put(:squares, new_squares)
-        |> Map.put(:turn, opponent)
+    def apply_normal_move(board, from, to) do
+        board = MakeUpdates.update_all(board, from, to)
+        piece = Map.get(board.squares, from)
+        squares = Map.put(board.squares, to, piece)
+            |> Map.delete(from)
+        %{ board | squares: squares }
     end
 
-    defp update_en_passant_target(state, from, to) do
-        square = Map.get(state.squares, from, {nil, nil})
-        piece = elem(square, 0)
-        distance = Utilities.vertical_distance(from, to)
-        target = Utilities.shift(state, from, {0, 1})
-        case {piece, distance} do
-            {:pawn, 2}  -> %{state | en_passant_target: target}
-            {:pawn, -2} -> %{state | en_passant_target: target}
-            _some_other -> %{state | en_passant_target: nil}
-        end
-    end
-
-    defp update_castling_rights(state, from, _to) do
-        {piece, color} = Map.get(state.squares, from, {nil, nil})
-        rights = state.castling_rights
-        new_rights = case {piece, color, from} do
-            {:king, :white, {:e, 1}} -> %{rights | white_kingside: false, white_queenside: false}
-            {:rook, :white, {:a, 1}} -> %{rights | white_queenside: false}
-            {:rook, :white, {:h, 1}} -> %{rights | white_kingside: false}
-            {:king, :black, {:e, 8}} -> %{rights | black_kingside: false, black_queenside: false}
-            {:rook, :black, {:a, 8}} -> %{rights | black_queenside: false}
-            {:rook, :black, {:h, 8}} -> %{rights | black_kingside: false}
-            _ -> rights
-        end
-        %{state | castling_rights: new_rights}
-    end
-
-    defp update_king_location(state, from, to) do
-        {piece, color} = Map.get(state.squares, from, {nil, nil})
-        case {piece, color} do
-            {:king, :white} -> %{state | white_king_location: to}
-            {:king, :black} -> %{state | black_king_location: to}
-            _ -> state
-        end
-    end
 end

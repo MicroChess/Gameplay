@@ -57,10 +57,10 @@ defmodule Game.KingMoves do
     def valid_castling_ends?(state, from, to) do
         {piece, color} = Map.get(state.squares, from, {nil, nil})
         case {piece, color, to} do
-            {:king, :white, {:c, 1}} -> state.castling_rights.white_queenside
-            {:king, :white, {:g, 1}} -> state.castling_rights.white_kingside
-            {:king, :black, {:c, 8}} -> state.castling_rights.black_queenside
-            {:king, :black, {:g, 8}} -> state.castling_rights.black_kingside
+            {:king, :white, {:c, 1}} -> state.castling_rights.white_rx
+            {:king, :white, {:g, 1}} -> state.castling_rights.white_lx
+            {:king, :black, {:c, 8}} -> state.castling_rights.black_rx
+            {:king, :black, {:g, 8}} -> state.castling_rights.black_lx
             _ -> false
         end
     end

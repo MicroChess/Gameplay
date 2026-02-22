@@ -4,10 +4,10 @@ defmodule Game.Board.Test do
     alias Game.MakeMoves
 
     @full_castling_rights %{
-        white_kingside:  true,
-        white_queenside: true,
-        black_kingside:  true,
-        black_queenside: true
+        white_lx: true,
+        white_rx: true,
+        black_lx: true,
+        black_rx: true
     }
 
     test "board move ok [valid move, white turn, no special case]" do
@@ -18,7 +18,8 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
@@ -32,7 +33,8 @@ defmodule Game.Board.Test do
             en_passant_target: {:b, 4},
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}).en_passant_target == nil
@@ -46,7 +48,8 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 3}) != :invalid_move
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 4}).en_passant_target == {:a, 3}
@@ -60,7 +63,8 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 2}, {:a, 8}) == :invalid_move
     end
@@ -73,14 +77,15 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:e, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         out = MakeMoves.apply_move(state, {:e, 1}, {:g, 1})
         assert out != :invalid_move
-        assert out.castling_rights.white_kingside == false
-        assert out.castling_rights.white_queenside == false
-        assert out.castling_rights.black_kingside == true
-        assert out.castling_rights.black_queenside == true
+        assert out.castling_rights.white_lx == false
+        assert out.castling_rights.white_rx == false
+        assert out.castling_rights.black_lx == true
+        assert out.castling_rights.black_rx == true
     end
 
     test "board move ok [valid move, white turn, invalidating castling rights]" do
@@ -91,14 +96,15 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: {:e, 1},
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         out = MakeMoves.apply_move(state, {:h, 1}, {:h, 3})
         assert out != :invalid_move
-        assert out.castling_rights.white_kingside == false
-        assert out.castling_rights.white_queenside == true
-        assert out.castling_rights.black_kingside == true
-        assert out.castling_rights.black_queenside == true
+        assert out.castling_rights.white_lx == false
+        assert out.castling_rights.white_rx == true
+        assert out.castling_rights.black_lx == true
+        assert out.castling_rights.black_rx == true
     end
 
     test "board move ok [wrong turn, white turn, but black is moving]" do
@@ -109,7 +115,8 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}) == :invalid_move
     end
@@ -122,7 +129,8 @@ defmodule Game.Board.Test do
             en_passant_target: nil,
             castling_rights: @full_castling_rights,
             white_king_location: nil,
-            black_king_location: nil
+            black_king_location: nil,
+            counters: %{ halfmoves: 0, fullmoves: 1 }
         }
         assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}) != :invalid_move
         assert MakeMoves.apply_move(state, {:a, 7}, {:a, 6}).turn == :white
