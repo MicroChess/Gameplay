@@ -1,9 +1,10 @@
-defmodule Match.State.Test do
+defmodule Match.FullGame.Test do
 
     use ExUnit.Case
 
     alias Match.DoMove
     alias Match.State
+    alias Game.Utilities
 
     @initial_state State.new(
         60 * 10,          # 10 minutes
@@ -11,6 +12,20 @@ defmodule Match.State.Test do
         "white_player",   # white player user-id
         "black_player"    # black player user-id
     )
+
+    def get_move_request(state, from, to) do
+      current_color = state.board.turn
+      opponent_color = Utilities.opponent_color(current_color)
+      opponent_player = State.player_user_id(state, opponent_color)
+      %{
+            type: "game.domove",
+            from: from,
+            to: to,
+            user: opponent_player,
+            count: 1,
+            promotion: nil
+        }
+    end
 
     @example_first_move_req %{
         type: "game.domove",

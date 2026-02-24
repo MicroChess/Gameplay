@@ -1,4 +1,4 @@
-defmodule Game.FullGame.Test do
+defmodule Game.ScholarsMate.Test do
     use ExUnit.Case
 
     alias Game.MakeMoves

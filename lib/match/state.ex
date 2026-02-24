@@ -66,4 +66,12 @@ defmodule Match.State do
         end
     end
 
+    def player_user_id(state, color) do
+        case color do
+            :white -> state.players.white
+            :black -> state.players.black
+            _ -> nil
+        end
+    end
+
 end
