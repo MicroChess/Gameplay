@@ -62,8 +62,8 @@ defmodule Game.Utilities do
         end
     end
 
-    def opponent(:white), do: :black
-    def opponent(:black), do: :white
+    def opponent_color(:white), do: :black
+    def opponent_color(:black), do: :white
     def both_colors(b, p1, p2), do: {color(b, p1), color(b, p2)}
     def horizontal_distance({sf, _}, {df, _}), do: abs(intify(sf) - intify(df))
     def vertical_distance({_, sr}, {_, dr}), do: abs(sr - dr)

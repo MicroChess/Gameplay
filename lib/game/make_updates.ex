@@ -9,7 +9,7 @@ defmodule Game.MakeUpdates do
         |>  update_en_passant_target(from, to)
         |>  update_castling_rights(from, to)
         |>  update_king_location(from, to)
-        |>  Map.put(:turn, Utilities.opponent(board.turn))
+        |>  Map.put(:turn, Utilities.opponent_color(board.turn))
 
     def update_halfmoves_counter(board, from, to) do
         {piece, _color} = Map.get(board.squares, from, {nil, nil})

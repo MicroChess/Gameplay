@@ -9,7 +9,6 @@ defmodule Match.State do
     @noending     %{ winner: nil,     reason: nil        }
 
     defstruct [
-        history: [],
         board:   %Board{},
         players: %{ white: nil, black: nil, spectators: MapSet.new(), },
         ending:  %{ winner: nil, reason: nil },
@@ -46,7 +45,7 @@ defmodule Match.State do
     end
 
     def update_ending(state) do
-        {color, opponent} = { state.board.turn, Utilities.opponent(state.board.turn) }
+        {color, opponent} = { state.board.turn, Utilities.opponent_color(state.board.turn) }
         checkmate_ending = %{ state.ending | winner: color, reason: :checkmate }
         timeout_ending = %{ state.ending | winner: opponent, reason: :timeout }
         king_status = Board.king_status(state.board, color)

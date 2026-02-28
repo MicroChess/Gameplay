@@ -32,6 +32,10 @@ defmodule Commons.Startup do
                 port: String.to_integer(System.get_env("port", "4000")),
                 plug: Commons.Router,
                 ip: {0, 0, 0, 0}
+            ]},
+            {Mongo, [
+                url: System.get_env("MONGODB_URL", "mongodb://localhost:27017/games"),
+                name: :mongo
             ]}
         ]
     end

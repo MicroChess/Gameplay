@@ -7,45 +7,35 @@ defmodule Match.Tracker do
     alias Match.Resign
 
     @impl GenServer
-    def init(state) do
-        {:ok, state}
+    def init(init) do
+        {:ok, init}
     end
 
     @impl GenServer
     def handle_call(datapack, sender, state) do
-        request = Map.merge(datapack, %{ :sender => sender })
-        case Map.fetch(request, :type) do
-            {:ok, mtype} -> process(mtype, request, state)
-            _ -> {:reply, :fatal, state}
-        end
+        req = Map.merge(datapack, %{ :sender => sender })
+        process(req, state)
     end
 
-    defp process(type, req, state) do
-        state = update_spectators(state, req.sender)
-        {white, black} = {state.players.white, state.players.black}
-        turn = if state.board.turn == :white,
-            do: state.players.white,
-            else: state.players.black
-        out = case {req.user, type} do
-            {^turn, "game.domove"}  -> DoMove.update_state(state, req)
-            {^white, "game.draw"}   -> Draw.update_state(state, req)
-            {^white, "game.resign"} -> Resign.update_state(state, req)
-            {^black, "game.draw"}   -> Draw.update_state(state, req)
-            {^black, "game.resign"} -> Resign.update_state(state, req)
-            {_any, "game.spectate"} -> {:ok, state}
-            _unrecognized_msg_type  -> {:error, "unrecognized_msg_type"}
+    defp process(req, state) do
+        out = case Map.fetch(req, :type) do
+            {:ok, "game.domove"  } -> DoMove.update_state(state, req)
+            {:ok, "game.draw"    } -> Draw.update_state(state, req)
+            {:ok, "game.resign"  } -> Resign.update_state(state, req)
+            {:ok, "game.spectate"} -> {:ok, update_spectators(state, req.sender)}
+            _unrecognized_msg_type -> {:error, "unrecognized_msg_type"}
         end
         with {:ok, new_state} <- out do
             notify_spectators(new_state)
             {:reply, :ok, new_state}
         else
+            :unchanged -> {:reply, :ok, state}
             err -> {:reply, err, state}
         end
     end
 
     defp notify_spectators(state) do
-        players = Map.get(state, :players, Map.new())
-        spectators = Map.get(players, :spectators, MapSet.new())
+        spectators = state.players.spectators
         Enum.each(spectators, fn spectator ->
             send(spectator, {:game_update, state})
         end)

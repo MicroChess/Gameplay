@@ -15,7 +15,8 @@ defmodule Build do
                 {:websock, "~> 0.5"},
                 {:plug, "~> 1.14"},
                 {:jason, "~> 1.4"},
-                {:msgpax, "~> 2.3"}
+                {:msgpax, "~> 2.3"},
+                {:mongodb, "~> 1.0"}
             ]
         ]
     end
