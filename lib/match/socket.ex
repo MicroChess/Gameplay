@@ -28,23 +28,20 @@ defmodule Match.Socket do
 
     @impl WebSock
     def handle_in({message, [opcode: protocol]}, state) do
-        with {:ok, merged} <- state_merge(message, state),
-             {:ok, plain}  <- Formatting.decode(merged, protocol),
-             {:ok, type}   <- Map.fetch(plain, "type"),
-             {:ok, game}   <- Map.fetch(plain, "game"),
-             {:ok, dpack}  <- Formatting.enforce(@shapes, plain, type),
-             {:ok, _resp}  <- Messaging.search_and_delegate(Tracker, dpack, [ game: game ])
+        label = %{ game: Map.get(state, :game) }
+        with {:ok, decoded}    <- Formatting.decode(message, protocol),
+             {:ok, datapack}   <- Map.merge(decoded, state),
+             {:ok, dpack_type} <- Map.fetch(datapack, "type"),
+             {:ok, enforced}   <- Formatting.enforce(@shapes, datapack, dpack_type),
+             {:ok, _resp}      <- Messaging.summon_and_delegate(Tracker, enforced, label)
         do
-            Formatting.encode!(%{ "msg" => "#{type}.ack" }, protocol)
+            res = %{ "msg" => "#{dpack_type}.ack" }
+            res |> Formatting.encode!(protocol)
                 |> Formatting.resp(protocol, state)
         else
             {:error, reason} -> Formatting.error(reason, protocol, state)
             msg -> Formatting.error("Invalid msg: #{inspect(msg)}", protocol, state)
         end
-    end
-
-    defp state_merge(message, state) do
-        {:ok, Map.merge(message, state)}
     end
 
     @impl WebSock

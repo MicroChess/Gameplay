@@ -15,6 +15,8 @@ defmodule Match.Tracker.Test do
         "black_player"    # black player user
     )
 
+    @raw_initialization %{ raw: @initial_state }
+
     @example_first_move_req %{
         type: "game.domove",
         from: {:e, 2},
@@ -39,7 +41,7 @@ defmodule Match.Tracker.Test do
     }
 
     test "Tracker ok [spectators notified]" do
-        {:ok, tracker} = GenServer.start_link(Tracker, @initial_state)
+        {:ok, tracker} = GenServer.start_link(Tracker, @raw_initialization)
         {:ok, white_player} = GenServer.start_link(Sentinel, %{})
         {:ok, spectator} = GenServer.start_link(Sentinel, %{})
         Sentinel.impersonate_and_call(spectator, @example_spectate_req, tracker)
@@ -49,7 +51,7 @@ defmodule Match.Tracker.Test do
     end
 
     test "Tracker ok [spectators notified more then once]" do
-        {:ok, tracker} = GenServer.start_link(Tracker, @initial_state)
+        {:ok, tracker} = GenServer.start_link(Tracker, @raw_initialization)
         {:ok, white_player} = GenServer.start_link(Sentinel, %{})
         {:ok, black_player} = GenServer.start_link(Sentinel, %{})
         {:ok, spectator} = GenServer.start_link(Sentinel, %{})
@@ -61,7 +63,7 @@ defmodule Match.Tracker.Test do
     end
 
     test "Tracker ok [spectators not notified on errors]" do
-        {:ok, tracker} = GenServer.start_link(Tracker, @initial_state)
+        {:ok, tracker} = GenServer.start_link(Tracker, @raw_initialization)
         {:ok, black_player} = GenServer.start_link(Sentinel, %{})
         {:ok, spectator} = GenServer.start_link(Sentinel, %{})
         Sentinel.impersonate_and_call(spectator, @example_spectate_req, tracker)
