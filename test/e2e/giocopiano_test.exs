@@ -1,9 +1,6 @@
 defmodule GiocoPiano.Test do
     use ExUnit.Case
 
-
-
-
     @white_can_castle     %{ white_lx: true, white_rx: true }
     @white_cannot_castle  %{ white_lx: false, white_rx: false }
     @black_can_castle     %{ black_lx: true, black_rx: true }

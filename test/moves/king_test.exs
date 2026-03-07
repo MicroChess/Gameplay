@@ -1,7 +1,6 @@
 defmodule King.Test do
+
     use ExUnit.Case
-
-
 
     test "king move ok [push, a2 -> a3, no capture]" do
         squares = %{ {:a, 2} => {:king, :white} }

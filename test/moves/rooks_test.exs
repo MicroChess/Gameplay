@@ -1,7 +1,6 @@
 defmodule Rooks.Test do
+
     use ExUnit.Case
-
-
 
     test "Rook move ok [horizontal, a1 -> d1, no capture]" do
         squares = %{ {:a, 1} => {:rook, :white} }

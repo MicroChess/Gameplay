@@ -2,10 +2,6 @@ defmodule FullTest do
 
     use ExUnit.Case
 
-
-
-
-
     @initial_state Game.new(
         60 * 10,          # 10 minutes
         5,                # 5 seconds increment

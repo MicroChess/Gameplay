@@ -1,8 +1,6 @@
 defmodule Board.Test do
     use ExUnit.Case
 
-
-
     @full_castling_rights %{
         white_lx: true,
         white_rx: true,

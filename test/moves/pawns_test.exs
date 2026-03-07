@@ -1,7 +1,6 @@
 defmodule Pawns.Test do
+
     use ExUnit.Case
-
-
 
     test "pawn move ok [push, a2 -> a3, no capture]" do
         squares = %{ {:a, 2} => {:pawn, :white} }
