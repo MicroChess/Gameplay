@@ -1,5 +1,6 @@
-defmodule Commons.Sentinel do
-    @behaviour GenServer
+defmodule Sentinel do
+
+    use GenServer
 
     @impl GenServer
     def init(state), do: {:ok, state}

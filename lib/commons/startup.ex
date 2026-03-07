@@ -1,4 +1,4 @@
-defmodule Commons.Startup do
+defmodule Startup do
 
     use Application
 
@@ -30,7 +30,7 @@ defmodule Commons.Startup do
             ]},
             {Bandit, [
                 port: String.to_integer(System.get_env("port", "4000")),
-                plug: Commons.Router,
+                plug: Router,
                 ip: {0, 0, 0, 0}
             ]},
             {Mongo, [

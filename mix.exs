@@ -24,7 +24,7 @@ defmodule Build do
     def application do
         [
             extra_applications: [:logger],
-            mod: {Commons.Startup, []}
+            mod: {Startup, []}
         ]
     end
 end
