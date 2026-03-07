@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: clusterchess-backend-dp
-  namespace: clusterchess-backend
+  name: microchess-gameplay-dp
+  namespace: microchess-gameplay
 spec:
   replicas: {{ .Values.replicas.min }}
   selector:
     matchLabels:
-      app: clusterchess-backend
+      app: microchess-gameplay
   template:
     metadata:
       labels:
-        app: clusterchess-backend
+        app: microchess-gameplay
     spec:
       containers:
       - name: backend

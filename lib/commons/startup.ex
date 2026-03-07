@@ -50,20 +50,22 @@ defmodule Startup do
     end
 
     defp cluster_strategy do
-        case System.get_env("strategy", "local") do
+        case System.get_env("strategy", "none") do
+            "none"  -> Cluster.Strategy.Epmd
             "local" -> Cluster.Strategy.LocalEpmd
-            "kubernetes" -> Cluster.Strategy.Kubernetes.DNS
+            "kube"  -> Cluster.Strategy.Kubernetes.DNS
             _ -> raise "Unknown clustering strategy"
         end
     end
 
     defp cluster_config do
-        case System.get_env("strategy", "local") do
+        case System.get_env("strategy", "none") do
+            "none"  -> [ hosts: [] ]
             "local" -> []
-            "kubernetes" ->
+            "kube"  ->
                 [
-                    service: "clusterchess-backend-hl",
-                    namespace: "clusterchess-backend",
+                    service: "microchess-gameplay-hl",
+                    namespace: "microchess-gameplay",
                     application_name: "backend",
                     polling_interval: 10_000
                 ]

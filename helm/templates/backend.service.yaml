@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: clusterchess-backend-sv
-  namespace: clusterchess-backend
+  name: microchess-gameplay-sv
+  namespace: microchess-gameplay
 spec:
   selector:
-    app: clusterchess-backend
+    app: microchess-gameplay
   ports:
     - port: 80
       targetPort: 80

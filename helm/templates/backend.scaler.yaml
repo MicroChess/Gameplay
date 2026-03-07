@@ -1,11 +1,11 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: clusterchess-backend-scaler
-  namespace: clusterchess-backend
+  name: microchess-gameplay-scaler
+  namespace: microchess-gameplay
 spec:
   scaleTargetRef:
-    name: clusterchess-backend-dp
+    name: microchess-gameplay-dp
   minReplicaCount: {{ .Values.replicas.min }}
   maxReplicaCount: {{ .Values.replicas.max }}
   triggers:

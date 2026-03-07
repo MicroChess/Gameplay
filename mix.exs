@@ -3,7 +3,7 @@ defmodule Build do
 
     def project do
         [
-            app: :clusterchess_backend,
+            app: :microchess_gameplay,
             version: "0.1.0",
             elixir: "~> 1.19",
             start_permanent: Mix.env() == :prod,

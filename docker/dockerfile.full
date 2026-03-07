@@ -34,10 +34,10 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-COPY --from=0 /app/_build/prod/rel/dero ./
+COPY --from=0 /app/_build/prod/rel/microchess-gameplay ./
 
 ENV port=80
-ENV strategy="kubernetes"
+ENV strategy="kube"
 
 ENV MIX_ENV=prod
 ENV RELEASE_DISTRIBUTION=name
@@ -45,4 +45,4 @@ ENV ERL_DIST_PORT=9000
 
 EXPOSE 80 4369 9000
 
-CMD ["bin/dero", "start"]
+CMD ["bin/microchess-gameplay", "start"]

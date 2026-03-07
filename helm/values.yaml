@@ -1,6 +1,6 @@
 image:
   registry: docker.io
-  repo: fdero/clusterchess-backend
+  repo: fdero/microchess-gameplay
   tag: latest
 
 resources:
