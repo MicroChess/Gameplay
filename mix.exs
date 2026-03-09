@@ -16,7 +16,7 @@ defmodule Build do
                 {:plug, "~> 1.14"},
                 {:jason, "~> 1.4"},
                 {:msgpax, "~> 2.3"},
-                {:mongodb, "~> 1.0"}
+                {:mongodb_driver, "~> 1.5"},
             ]
         ]
     end

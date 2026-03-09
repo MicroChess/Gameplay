@@ -22,15 +22,16 @@ defmodule Game do
         }
     ]
 
-    def new(time, increment, white, black), do: %__MODULE__{
-        board: %Board{},
-        clock: Clock.new(time, increment),
-        players: %{
-            white: white,
-            black: black,
-            spectators: MapSet.new(),
-        },
-    }
+    def new(time, increment, white, black, board \\ %Board{}),
+        do: %__MODULE__{
+            board: board,
+            clock: Clock.new(time, increment),
+            players: %{
+                white: white,
+                black: black,
+                spectators: MapSet.new(),
+            },
+        }
 
     def update_state(state, callback) do
         updated = cond do

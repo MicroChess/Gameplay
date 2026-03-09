@@ -2,6 +2,13 @@ defmodule Serialization do
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 
+    def encode_game_bison(game_state) do
+        players = Map.delete(game_state.players, :spectators)
+        fen = Serialization.encode_fen(game_state.board)
+        clock = Map.from_struct(game_state.clock)
+        Map.from_struct(%{ game_state | players: players, board: fen, clock: clock })
+    end
+
     def encode_fen(board) do
         discard_empty = fn txt -> txt != "" end
         sections = [

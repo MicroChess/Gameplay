@@ -2,6 +2,14 @@ defmodule Deserialization do
 
     @files [:a, :b, :c, :d, :e, :f, :g, :h]
 
+    def decode_game_bison(obj) do
+        ok_spectators = Map.put(obj.players, :spectators, MapSet.new())
+        ok_board = decode_fen(obj.board)
+        clock = struct(Clock, obj.clock)
+        out = %{ obj | players: ok_spectators, board: ok_board, clock: clock }
+        struct(out, Game)
+    end
+
     def decode_fen(fen) do
         [squares, turn, rights, en_passant, half, full] = String.split(fen, " ")
         %Board{
