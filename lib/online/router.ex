@@ -10,7 +10,7 @@ defmodule Router do
     plug :match
     plug :dispatch
 
-    get "/games/rest/create" do
+    get "/v1/gameplay/create" do
         white = Map.get(conn.params, "white-player-id", 1)
         black = Map.get(conn.params, "black-player-id", 2)
         incr  = Map.get(conn.params, "time-increment",  5)
@@ -26,7 +26,7 @@ defmodule Router do
         end
     end
 
-    get "/games/ws/play" do
+    get "/v1/gameplay/join" do
         conn = Conn.fetch_query_params(conn)
         user_id_header = Conn.get_req_header(conn, "X-User-ID")
         target_game_parameter = conn.params["game-id"]

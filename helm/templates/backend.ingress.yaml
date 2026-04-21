@@ -8,7 +8,7 @@ spec:
   tls:
     secretName: microchess-gameplay-tls
   routes:
-    - match: Host(`api.microchess.fdero.com`)
+    - match: Host(`api.microchess.fdero.com`) && PathPrefix(`/v1/gameplay`)
       kind: Rule
       middlewares:
         - name: microchess-gameplay-https-redirect
