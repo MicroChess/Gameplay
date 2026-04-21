@@ -2,7 +2,6 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: microchess-gameplay-scaler
-  namespace: microchess-gameplay
 spec:
   scaleTargetRef:
     name: microchess-gameplay-dp

@@ -2,7 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: microchess-gameplay-cert
-  namespace: microchess-gameplay
 spec:
   secretName: microchess-gameplay-tls
   issuerRef:

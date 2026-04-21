@@ -34,7 +34,7 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-COPY --from=0 /app/_build/prod/rel/microchess-gameplay ./
+COPY --from=0 /app/_build/prod/rel/microchess_gameplay ./
 
 ENV port=80
 ENV strategy="kube"
@@ -45,4 +45,4 @@ ENV ERL_DIST_PORT=9000
 
 EXPOSE 80 4369 9000
 
-CMD ["bin/microchess-gameplay", "start"]
+CMD ["bin/microchess_gameplay", "start"]

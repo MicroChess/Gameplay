@@ -1,8 +1,7 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: backend-http-https-redirect
-  namespace: microchess-gameplay
+  name: microchess-gameplay-https-redirect
 spec:
   redirectScheme:
     scheme: https

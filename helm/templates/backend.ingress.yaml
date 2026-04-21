@@ -2,7 +2,6 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: microchess-gameplay-ig
-  namespace: microchess-gameplay
 spec:
   entryPoints:
     - websecure
@@ -12,7 +11,7 @@ spec:
     - match: Host(`api.microchess.fdero.com`)
       kind: Rule
       middlewares:
-        - name: backend-http-https-redirect
+        - name: microchess-gameplay-https-redirect
       services:
         - name: microchess-gameplay-sv
           port: 80

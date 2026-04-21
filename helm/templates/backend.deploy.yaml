@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: microchess-gameplay-dp
-  namespace: microchess-gameplay
 spec:
   replicas: {{ .Values.replicas.min }}
   selector:
