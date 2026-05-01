@@ -1,4 +1,6 @@
 config:
+  namespace: "microchess"
+  authenticatorUrl: "http://microchess-auth.microchess.svc.cluster.local/v1/auth/authorize/native"
   hostname: "api.microchess.fdero.com"
   routePrefix: "/v1/gameplay"
   prefix: microchess-gameplay

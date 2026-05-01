@@ -2,10 +2,10 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: "{{ .Values.config.prefix }}-authenticator"
-  namespace: default
+  namespace: "{{ .Values.config.namespace }}"
 spec:
   forwardAuth:
-    address: http://authentication.microchess.svc.cluster.local/v1/auth/authorize/native
+    address: "{{ .Values.config.authenticatorUrl }}"
     trustForwardHeader: true
     authResponseHeaders:
       - X-User-Name
