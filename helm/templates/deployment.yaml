@@ -14,34 +14,28 @@ spec:
         app: {{ .Values.config.prefix }}
     spec:
       containers:
-      - name: backend
+      - name: gameplay
         image: "{{ .Values.image.registry }}/{{ .Values.image.repo }}:{{ .Values.image.tag }}"
+        ports: 
+          {{- .Values.ports | toYaml | nindent 10 }}
+        resources: 
+          {{- .Values.resources | toYaml | nindent 10 }}
         env:
-        - name: POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: RELEASE_DISTRIBUTION
-          value: "name"
-        - name: RELEASE_NODE
-          value: "backend@$(POD_IP)"
-        ports:
-        - containerPort: 80
-          name: http
-        - containerPort: 4369
-          name: epmd
-        resources:
-          requests:
-            cpu: {{ .Values.resources.requests.cpu }}
-            memory: {{ .Values.resources.requests.memory }}
-          limits:
-            cpu: {{ .Values.resources.limits.cpu }}
-            memory: {{ .Values.resources.limits.memory }}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: RELEASE_DISTRIBUTION
+            value: "name"
+          - name: RELEASE_NODE
+            value: "gameplay@$(POD_IP)"
+          - name: MONGODB_URL
+            value: "{{ .Values.config.mongodbUrl }}"

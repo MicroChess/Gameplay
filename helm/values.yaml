@@ -1,9 +1,16 @@
 config:
   namespace: "microchess"
   authenticatorUrl: "http://microchess-auth.microchess.svc.cluster.local/v1/auth/authorize/native"
+  mongodbUrl: "mongodb://microchess-mongodb.microchess.svc.cluster.local:27017"
   hostname: "api.microchess.fdero.com"
   routePrefix: "/v1/gameplay"
   prefix: microchess-gameplay
+
+ports:
+  - containerPort: 80
+    name: http
+  - containerPort: 4369
+    name: epmd
 
 image:
   registry: docker.io
