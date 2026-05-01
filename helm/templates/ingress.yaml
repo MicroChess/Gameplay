@@ -12,6 +12,7 @@ spec:
       kind: Rule
       middlewares:
         - name: "{{ .Values.config.prefix }}-https-redirect"
+        - name: "{{ .Values.config.prefix }}-authenticator"
       services:
         - name: "{{ .Values.config.prefix }}-sv"
           port: 80
