@@ -1,3 +1,8 @@
+config:
+  hostname: "api.microchess.fdero.com"
+  routePrefix: "/v1/gameplay"
+  prefix: microchess-gameplay
+
 image:
   registry: docker.io
   repo: fdero/microchess-gameplay
@@ -12,5 +17,5 @@ resources:
     memory: 256Mi
 
 replicas:
- min: 2
- max: 3
+  min: 2
+  max: 3

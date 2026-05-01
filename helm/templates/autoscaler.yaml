@@ -1,10 +1,10 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: microchess-gameplay-scaler
+  name: "{{ .Values.config.prefix }}-scaler"
 spec:
   scaleTargetRef:
-    name: microchess-gameplay-dp
+    name: "{{ .Values.config.prefix }}-dp"
   minReplicaCount: {{ .Values.replicas.min }}
   maxReplicaCount: {{ .Values.replicas.max }}
   triggers:

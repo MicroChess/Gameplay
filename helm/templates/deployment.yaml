@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: microchess-gameplay-dp
+  name: "{{ .Values.config.prefix }}-dp"
 spec:
   replicas: {{ .Values.replicas.min }}
   selector:
     matchLabels:
-      app: microchess-gameplay
+      app: {{ .Values.config.prefix }}
   template:
     metadata:
       labels:
-        app: microchess-gameplay
+        app: {{ .Values.config.prefix }}
     spec:
       containers:
       - name: backend

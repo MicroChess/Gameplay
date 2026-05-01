@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: microchess-gameplay-hl
+  name: "{{ .Values.config.prefix }}-hl"
 spec:
   selector:
-    app: microchess-gameplay
+    app: "{{ .Values.config.prefix }}"
   ports:
     - port: 4369
       targetPort: 4369
