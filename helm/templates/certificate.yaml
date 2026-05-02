@@ -9,4 +9,4 @@ spec:
     name: certmanager-issuer
     kind: ClusterIssuer
   dnsNames:
-    - api.microchess.fdero.com
+    - "{{ .Values.config.hostname }}"
