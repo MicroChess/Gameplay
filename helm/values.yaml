@@ -1,7 +1,7 @@
 config:
   namespace: "microchess"
   authenticatorUrl: "http://microchess-auth.microchess.svc.cluster.local/v1/auth/authorize/native"
-  mongodbUrl: "mongodb://microchess-mongodb.microchess.svc.cluster.local:27017"
+  mongodbUrl: "mongodb://mongodb-0.mongodb-headless.microchess.svc.cluster.local:27017"
   hostname: "api.microchess.fdero.com"
   routePrefix: "/v1/gameplay"
   prefix: microchess-gameplay
