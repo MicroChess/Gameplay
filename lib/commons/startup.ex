@@ -65,8 +65,8 @@ defmodule Startup do
             "kube"  ->
                 [
                     service: "microchess-gameplay-hl",
-                    namespace: "microchess-gameplay",
-                    application_name: "backend",
+                    namespace: "microchess",
+                    application_name: "gameplay",
                     polling_interval: 10_000
                 ]
             _ -> raise "Unknown clustering strategy"
