@@ -1,22 +1,22 @@
 defmodule KingMoves do
 
     def apply_move!(board, from, to),
-        do: MetaData.update_king_location(board, from, to)
+        do: BoardUpdates.update_king_location(board, from, to)
         |>  update_rooks_positions_before_castling(from, to)
-        |>  MetaData.update_castling_rights(from, to)
-        |>  MetaData.update_en_passant_target(from, to)
-        |>  MetaData.update_fullmoves_counter(from, to)
-        |>  MetaData.update_halfmoves_counter(from, to)
-        |>  MetaData.update_current_turn()
-        |>  MetaData.update_squares_after_move(from, to)
+        |>  BoardUpdates.update_castling_rights(from, to)
+        |>  BoardUpdates.update_en_passant_target(from, to)
+        |>  BoardUpdates.update_fullmoves_counter(from, to)
+        |>  BoardUpdates.update_halfmoves_counter(from, to)
+        |>  BoardUpdates.update_current_turn()
+        |>  BoardUpdates.update_squares_after_move(from, to)
 
     defp update_rooks_positions_before_castling(board, from, to) do
         {_piece, color} = Map.get(board.squares, from, {nil, nil})
         case {color, to} do
-            {:white, {:c, 1}} -> MetaData.update_squares_after_move(board, {:a, 1}, {:d, 1})
-            {:white, {:g, 1}} -> MetaData.update_squares_after_move(board, {:h, 1}, {:f, 1})
-            {:black, {:c, 8}} -> MetaData.update_squares_after_move(board, {:a, 8}, {:d, 8})
-            {:black, {:g, 8}} -> MetaData.update_squares_after_move(board, {:h, 8}, {:f, 8})
+            {:white, {:c, 1}} -> BoardUpdates.update_squares_after_move(board, {:a, 1}, {:d, 1})
+            {:white, {:g, 1}} -> BoardUpdates.update_squares_after_move(board, {:h, 1}, {:f, 1})
+            {:black, {:c, 8}} -> BoardUpdates.update_squares_after_move(board, {:a, 8}, {:d, 8})
+            {:black, {:g, 8}} -> BoardUpdates.update_squares_after_move(board, {:h, 8}, {:f, 8})
             _ -> board
         end
     end

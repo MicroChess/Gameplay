@@ -19,7 +19,7 @@ defmodule DoMove do
         Game.update_state(game, fn game ->
             both_players = [game.players.white, game.players.black]
             fullmove_count = game.board.counters.fullmoves
-            player_color = Game.player_color(game, req.user)
+            player_color = Players.player_color(game.players, req.user)
             piece_color = Squares.color(game.board.squares, req.from)
             new_board = Board.apply_move!(game.board, req.from, req.to, req.promotion)
             cond do

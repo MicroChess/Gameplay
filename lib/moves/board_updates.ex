@@ -1,4 +1,4 @@
-defmodule MetaData do
+defmodule BoardUpdates do
 
     def update_halfmoves_counter(board, from, to) do
         {piece, _color} = Map.get(board.squares, from, {nil, nil})

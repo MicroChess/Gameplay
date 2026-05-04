@@ -1,11 +1,11 @@
 defmodule BishopMoves do
 
     def apply_move!(board, from, to),
-        do: MetaData.update_en_passant_target(board, from, to)
-        |>  MetaData.update_fullmoves_counter(from, to)
-        |>  MetaData.update_halfmoves_counter(from, to)
-        |>  MetaData.update_current_turn()
-        |>  MetaData.update_squares_after_move(from, to)
+        do: BoardUpdates.update_en_passant_target(board, from, to)
+        |>  BoardUpdates.update_fullmoves_counter(from, to)
+        |>  BoardUpdates.update_halfmoves_counter(from, to)
+        |>  BoardUpdates.update_current_turn()
+        |>  BoardUpdates.update_squares_after_move(from, to)
 
     def legal_moves(board, from) do
         diag1 = for x <- -7..7, do: Squares.shift(board, from, {x, x})

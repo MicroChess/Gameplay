@@ -10,27 +10,19 @@ defmodule Game do
 
     defstruct [
         board:   %Board{},
-        players: %{ white: nil, black: nil, spectators: MapSet.new(), },
+        clock:   %Clock{},
+        players: %Players{},
         ending:  %{ winner: nil, reason: nil },
         pending: %{ offer_type: nil, requester: nil },
-        clock: %{
-            increment: 5,
-            game_start: nil,
-            game_end: nil,
-            white_timeout_treshold: nil,
-            black_timeout_treshold: nil,
-        }
+        history: %History{},
     ]
 
-    def new(time, increment, white, black, board \\ %Board{}),
+    def new(clock, players, board),
         do: %__MODULE__{
             board: board,
-            clock: Clock.new(time, increment),
-            players: %{
-                white: white,
-                black: black,
-                spectators: MapSet.new(),
-            },
+            clock: clock,
+            history: History.new(board),
+            players: players
         }
 
     def update_state(state, callback) do
@@ -57,21 +49,4 @@ defmodule Game do
             true -> @noending
         end
     end
-
-    def player_color(state, user) do
-        cond do
-            state.players.white == user -> :white
-            state.players.black == user -> :black
-            true -> nil
-        end
-    end
-
-    def player_user_id(state, color) do
-        case color do
-            :white -> state.players.white
-            :black -> state.players.black
-            _ -> nil
-        end
-    end
-
 end

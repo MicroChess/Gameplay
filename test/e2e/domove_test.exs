@@ -3,10 +3,9 @@ defmodule DoMove.Test do
     use ExUnit.Case
 
     @initial_state Game.new(
-        60 * 10,          # 10 minutes
-        5,                # 5 seconds increment
-        "white_player",   # white player user-id
-        "black_player"    # black player user-id
+        Clock.new(60 * 10, 5),
+        Players.new("white_player", "black_player"),
+        %Board{}
     )
 
     @white_req %DoMove{ user: "white_player" }

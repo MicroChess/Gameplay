@@ -5,10 +5,9 @@ defmodule Tracker.Test do
     @messages_used_for_subscription 1
 
     @initial_state Game.new(
-        60 * 10,          # 10 minutes
-        5,                # 5 seconds increment
-        "white_player",   # white player user
-        "black_player"    # black player user
+        Clock.new(60 * 10, 5),
+        Players.new("white_player", "black_player"),
+        %Board{}
     )
 
     @raw_initialization %{

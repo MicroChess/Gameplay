@@ -12,7 +12,7 @@ defmodule Resign do
 
     def update_state(game, req) do
         Game.update_state(game, fn game ->
-            case Game.player_color(game, req.user) do
+            case Players.player_color(game.players, req.user) do
                 :white -> {:ok, %{game | ending: %{ winner: :black, reason: :resign }}}
                 :black -> {:ok, %{game | ending: %{ winner: :white, reason: :resign }}}
                 nil    -> {:error, "invalid resignation"}

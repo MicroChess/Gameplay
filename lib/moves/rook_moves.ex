@@ -1,12 +1,12 @@
 defmodule RookMoves do
 
     def apply_move!(board, from, to),
-        do: MetaData.update_castling_rights(board, from, to)
-        |>  MetaData.update_en_passant_target(from, to)
-        |>  MetaData.update_fullmoves_counter(from, to)
-        |>  MetaData.update_halfmoves_counter(from, to)
-        |>  MetaData.update_current_turn()
-        |>  MetaData.update_squares_after_move(from, to)
+        do: BoardUpdates.update_castling_rights(board, from, to)
+        |>  BoardUpdates.update_en_passant_target(from, to)
+        |>  BoardUpdates.update_fullmoves_counter(from, to)
+        |>  BoardUpdates.update_halfmoves_counter(from, to)
+        |>  BoardUpdates.update_current_turn()
+        |>  BoardUpdates.update_squares_after_move(from, to)
 
     def legal_moves(board, from) do
         hz = for x <- -7..7, do: Squares.shift(board, from, {x, 0})

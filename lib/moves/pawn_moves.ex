@@ -6,11 +6,11 @@ defmodule PawnMoves do
 
     def apply_move!(board, from, to),
         do: capture_en_passant_target(board, to)
-        |>  MetaData.update_en_passant_target(from, to)
-        |>  MetaData.update_fullmoves_counter(from, to)
-        |>  MetaData.update_halfmoves_counter(from, to)
-        |>  MetaData.update_current_turn()
-        |>  MetaData.update_squares_after_move(from, to)
+        |>  BoardUpdates.update_en_passant_target(from, to)
+        |>  BoardUpdates.update_fullmoves_counter(from, to)
+        |>  BoardUpdates.update_halfmoves_counter(from, to)
+        |>  BoardUpdates.update_current_turn()
+        |>  BoardUpdates.update_squares_after_move(from, to)
 
     defp capture_en_passant_target(board, to) do
         target = Squares.shift(board, to, {0, 1})

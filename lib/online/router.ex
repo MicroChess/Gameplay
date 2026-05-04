@@ -17,8 +17,10 @@ defmodule Router do
         time  = Map.get(conn.params, "player-max-time", 10)
         fen   = Map.get(conn.params, "start-board-fen", @fen)
         try do
-            board = Deserialization.decode_fen(fen)
-            game  = Game.new(time, incr, white, black, board)
+            board   = Deserialization.decode_fen(fen)
+            clock   = Clock.new(time, incr)
+            players = Players.new(white, black)
+            game    = Game.new(clock, players, board)
             {:ok, game_id} = Persinstence.insert(game)
             game_created(conn, game_id)
         rescue

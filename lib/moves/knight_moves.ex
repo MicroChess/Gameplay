@@ -2,11 +2,11 @@ defmodule KnightMoves do
 
     def apply_move!(board, from, to),
         do: board
-        |>  MetaData.update_en_passant_target(from, to)
-        |>  MetaData.update_fullmoves_counter(from, to)
-        |>  MetaData.update_halfmoves_counter(from, to)
-        |>  MetaData.update_current_turn()
-        |>  MetaData.update_squares_after_move(from, to)
+        |>  BoardUpdates.update_en_passant_target(from, to)
+        |>  BoardUpdates.update_fullmoves_counter(from, to)
+        |>  BoardUpdates.update_halfmoves_counter(from, to)
+        |>  BoardUpdates.update_current_turn()
+        |>  BoardUpdates.update_squares_after_move(from, to)
 
     def legal_moves(board, from) do
         ms = for x <- -2..2, y <- -2..2, x != y, x != 0, y != 0, do:
