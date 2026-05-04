@@ -6,20 +6,18 @@ defmodule History do
     }
 
     defstruct [
-        version: 1,
         entries: [ @starting ]
     ]
 
-    def new(board), do: [
+    def new(board), do: wrap([
         %{
             type: "starting",
             fen: Serialization.encode_fen(board)
         }
-    ]
+    ])
 
-    defp wrap(raw_history) do
+    def wrap(raw_history) do
         %__MODULE__{
-            version: 1,
             entries: raw_history
         }
     end
@@ -34,7 +32,7 @@ defmodule History do
 
     defp register_undo_helper([head | tail], sent_by) do
         { remaining, fen } = register_undo(tail, sent_by)
-        { [head | remaining], fen }
+        { wrap([head | remaining]), fen }
     end
 
     def register_move(history, board) do

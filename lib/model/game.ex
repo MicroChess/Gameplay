@@ -38,7 +38,7 @@ defmodule Game do
         end
     end
 
-    def update_ending(state) do
+    defp update_ending(state) do
         {color, opponent} = { state.board.turn, Squares.opponent_color(state.board.turn) }
         checkmate_ending = %{ state.ending | winner: color, reason: :checkmate }
         timeout_ending = %{ state.ending | winner: opponent, reason: :timeout }
