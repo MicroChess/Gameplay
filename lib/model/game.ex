@@ -1,10 +1,5 @@
 defmodule Game do
 
-    alias Squares
-    alias Board
-    alias Clock
-    alias Squares
-
     @stalemate    %{ winner: :both,   reason: :stalemate }
     @noending     %{ winner: nil,     reason: nil        }
 
@@ -12,9 +7,15 @@ defmodule Game do
         board:   %Board{},
         clock:   %Clock{},
         players: %Players{},
-        ending:  %{ winner: nil, reason: nil },
-        pending: %{ offer_type: nil, requester: nil },
         history: %History{},
+        ending:  %{
+            winner: nil,
+            reason: nil
+        },
+        pending: %{
+            offer_type: nil,
+            requester: nil
+        },
     ]
 
     def new(clock, players, board),
