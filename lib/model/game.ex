@@ -3,7 +3,7 @@ defmodule Game do
     alias Squares
     alias Board
     alias Clock
-    alias Utilities
+    alias Squares
 
     @stalemate    %{ winner: :both,   reason: :stalemate }
     @noending     %{ winner: nil,     reason: nil        }
@@ -41,7 +41,7 @@ defmodule Game do
         {color, opponent} = { state.board.turn, Squares.opponent_color(state.board.turn) }
         checkmate_ending = %{ state.ending | winner: color, reason: :checkmate }
         timeout_ending = %{ state.ending | winner: opponent, reason: :timeout }
-        king_status = Utilities.king_status(state.board, color)
+        king_status = Squares.king_status(state.board, color)
         cond do
             Clock.player_timed_out?(state, color) -> timeout_ending
             king_status == :checkmate -> checkmate_ending

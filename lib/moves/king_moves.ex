@@ -65,7 +65,7 @@ defmodule KingMoves do
     def safe_castling_path?(state, from, extension, to) do
         king_color = Squares.color(state.squares, from)
         path = BasicMoves.path(from, to)
-        enemies = Utilities.enemies(state, king_color)
+        enemies = Squares.enemies(state, king_color)
         BasicMoves.valid_straight_move?(state, from, extension)
         and Enum.all?(for king <- path, enemy <- enemies,
             do: not Board.valid_move?(state, enemy, king)

@@ -25,7 +25,7 @@ defmodule CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Utilities.king_status(state, :white) == :checkmate
+        assert Squares.king_status(state, :white) == :checkmate
     end
 
     test "board move ok [stalemate by double rook]" do
@@ -43,7 +43,7 @@ defmodule CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Utilities.king_status(state, :white) == :stalemate
+        assert Squares.king_status(state, :white) == :stalemate
     end
 
     test "board move ok [safe because you can capture the rook]" do
@@ -60,7 +60,7 @@ defmodule CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Utilities.king_status(state, :white) == :safe
+        assert Squares.king_status(state, :white) == :safe
     end
 
     test "board move ok [safe because you can push the pawn]" do
@@ -79,6 +79,6 @@ defmodule CheckMates.Test do
             black_king_location: nil,
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
-        assert Utilities.king_status(state, :white) == :safe
+        assert Squares.king_status(state, :white) == :safe
     end
 end

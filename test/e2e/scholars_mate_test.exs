@@ -30,8 +30,8 @@ defmodule ScholarsMate.Test do
 
     def assert_expected_postmove_situation(board, color) do
         assert board != :invalid_move
-        assert Utilities.king_status(board, :white) == :safe
-        assert Utilities.king_status(board, :black) == :safe
+        assert Squares.king_status(board, :white) == :safe
+        assert Squares.king_status(board, :black) == :safe
         assert board.castling_rights == @full_castling_rights
         assert board.white_king_location == {:e, 1}
         assert board.black_king_location == {:e, 8}
@@ -49,7 +49,7 @@ defmodule ScholarsMate.Test do
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
 
-        assert Utilities.king_status(board, :white) == :safe
+        assert Squares.king_status(board, :white) == :safe
         assert board.turn == :white
 
         m1 = Board.apply_move!(board, {:e, 2}, {:e, 4})
@@ -77,8 +77,8 @@ defmodule ScholarsMate.Test do
         assert m6.en_passant_target == nil
 
         m7 = Board.apply_move!(m6, {:h, 5}, {:f, 7})
-        assert Utilities.king_status(m7, :white) == :safe
-        assert Utilities.king_status(m7, :black) == :checkmate
+        assert Squares.king_status(m7, :white) == :safe
+        assert Squares.king_status(m7, :black) == :checkmate
         assert m7.en_passant_target == nil
     end
 end

@@ -29,8 +29,8 @@ defmodule GiocoPiano.Test do
 
     def assert_expected_postmove_situation(board, color) do
         assert board != :invalid_move
-        assert Utilities.king_status(board, :white) == :safe
-        assert Utilities.king_status(board, :black) == :safe
+        assert Squares.king_status(board, :white) == :safe
+        assert Squares.king_status(board, :black) == :safe
         assert board.castling_rights == @full_castling_rights
         assert board.white_king_location == {:e, 1}
         assert board.black_king_location == {:e, 8}
@@ -48,7 +48,7 @@ defmodule GiocoPiano.Test do
             counters: %{ halfmoves: 0, fullmoves: 1 }
         }
 
-        assert Utilities.king_status(board, :white) == :safe
+        assert Squares.king_status(board, :white) == :safe
         assert board.turn == :white
 
         m1 = Board.apply_move!(board, {:e, 2}, {:e, 4})
