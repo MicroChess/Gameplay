@@ -8,18 +8,18 @@ defmodule Persinstence do
         end
     end
 
-    def sync(game_state) do
-        with {:ok, game_id} <- Map.fetch(game_state, :_id),
-            do: sync(game_state, game_id),
-            else: (_ -> {:error, "cannot sync a non persistent state"})
-    end
-
     def insert(game_state) do
         obj = Serialization.encode_game_bison(game_state)
         case Mongo.insert_one(:mongo, "games", obj) do
             {:ok, %{inserted_id: id}} -> {:ok, id}
             {:error, reason} -> {:error, reason}
         end
+    end
+
+    def sync(game_state) do
+        with {:ok, game_id} <- Map.fetch(game_state, :_id),
+            do: sync(game_state, game_id),
+            else: (_ -> {:error, "cannot sync a non persistent state"})
     end
 
     def sync(game_state, game_id) do

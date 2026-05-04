@@ -6,23 +6,24 @@ defmodule Draw do
     @derive Jason.Encoder
     defstruct [
         :user,
-        :type,
         :game,
         :count
     ]
 
-    def update_state(state, req) do
-        Game.update_state(state, fn state ->
-            white_player = state.players.white
-            black_player = state.players.black
-            draw_req_ack = %{ state | pending: %{ offer_type: :draw, requester: req.user } }
-            draw_accept = %{ state | pending: @nopending, ending: @stalemate }
+    def update_state(game, req, _sender),
+        do: update_state(game, req)
+
+    def update_state(game, req) do
+        Game.update_state(game, fn game ->
+            both_players = [game.players.white, game.players.black]
+            draw_req_ack = %{ game | pending: %{ offer_type: :draw, requester: req.user } }
+            draw_accept  = %{ game | pending: @nopending, ending: @stalemate }
             cond do
-                req.user not in [white_player, black_player] -> {:error, "forbidden: not a player"}
-                state.ending.winner != nil -> {:error, "game already over"}
-                state.pending.offer_type == nil -> {:ok, draw_req_ack }
-                state.pending.offer_type != :draw -> {:ok, draw_req_ack }
-                state.pending.requester != req.user -> {:ok, draw_accept}
+                req.user not in both_players       -> {:error, "forbidden: not a player"}
+                game.ending.winner != nil          -> {:error, "game already over"}
+                game.pending.offer_type == nil     -> {:ok, draw_req_ack }
+                game.pending.offer_type != :draw   -> {:ok, draw_req_ack }
+                game.pending.requester != req.user -> {:ok, draw_accept}
                 true -> {:error, "invalid draw offer"}
             end
         end)

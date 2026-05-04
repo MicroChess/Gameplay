@@ -17,25 +17,29 @@ defmodule Tracker.Test do
 
     @example_first_move_req %{
         type: "domove",
-        from: {:e, 2},
-        to: {:e, 4},
-        user: "white_player",
-        count: 1,
-        promotion: nil
+        body: %DoMove{
+            from: {:e, 2},
+            to: {:e, 4},
+            user: "white_player",
+            count: 1,
+            promotion: nil
+        }
     }
 
     @example_second_move_req %{
         type: "domove",
-        from: {:e, 7},
-        to: {:e, 5},
-        user: "black_player",
-        count: 1,
-        promotion: nil
+        body: %DoMove{
+            from: {:e, 7},
+            to: {:e, 5},
+            user: "black_player",
+            count: 1,
+            promotion: nil
+        }
     }
 
     @example_spectate_req %{
         type: "spectate",
-        user: "spectator"
+        body: %Spectate{ user: "spectator" }
     }
 
     test "Tracker ok [spectators notified]" do

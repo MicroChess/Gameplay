@@ -9,12 +9,12 @@ defmodule DoMove.Test do
         "black_player"    # black player user-id
     )
 
-    @white_req %DoMove{ type: "domove", user: "white_player" }
-    @black_req %DoMove{ type: "domove", user: "black_player" }
+    @white_req %DoMove{ user: "white_player" }
+    @black_req %DoMove{ user: "black_player" }
 
     test "Game ok [correctly handles first move]" do
-        move = %{ @white_req | from: {:e, 2}, to: {:e, 4}, count: 1}
-        assert {:ok, state} = DoMove.update_state(@initial_state, move)
+        move1 = %{ @white_req | from: {:e, 2}, to: {:e, 4}, count: 1}
+        assert {:ok, state} = DoMove.update_state(@initial_state, move1)
         assert state.board.turn == :black
         assert state.board.counters.halfmoves == 0
         assert state.board.counters.fullmoves == 1

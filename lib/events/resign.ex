@@ -3,16 +3,18 @@ defmodule Resign do
     @derive Jason.Encoder
     defstruct [
         :user,
-        :type,
         :game,
         :count
     ]
 
-    def update_state(state, req) do
-        Game.update_state(state, fn state ->
-            case Game.player_color(state, req.user) do
-                :white -> {:ok, %{state | ending: %{ winner: :black, reason: :resign }}}
-                :black -> {:ok, %{state | ending: %{ winner: :white, reason: :resign }}}
+    def update_state(game, req, _sender),
+        do: update_state(game, req)
+
+    def update_state(game, req) do
+        Game.update_state(game, fn game ->
+            case Game.player_color(game, req.user) do
+                :white -> {:ok, %{game | ending: %{ winner: :black, reason: :resign }}}
+                :black -> {:ok, %{game | ending: %{ winner: :white, reason: :resign }}}
                 nil    -> {:error, "invalid resignation"}
             end
         end)
