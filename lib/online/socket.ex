@@ -3,11 +3,11 @@ defmodule Socket do
     @behaviour WebSock
 
     @shapes %{
-        "domove" => DoMove,
-        "undo" => Communication,
-        "draw" => Communication,
-        "resign" => Communication,
-        "spectate" => Communication
+        "domove"   => DoMove,
+        "undo"     => Undo,
+        "draw"     => Draw,
+        "resign"   => Resign,
+        "spectate" => Spectate,
     }
 
     @impl WebSock
