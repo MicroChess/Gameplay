@@ -13,10 +13,11 @@ defmodule Tracker do
     @impl GenServer
     def handle_call(%{type: type, body: body}, sender, state) do
         out = case type do
-            "domove"   -> DoMove.update_state(state, body, sender)
-            "draw"     -> Draw.update_state(state, body, sender)
-            "resign"   -> Resign.update_state(state, body, sender)
-            "spectate" -> Spectate.update_state(state, body, sender)
+            "domove"   -> DoMove.update_state(state, body)
+            "draw"     -> Draw.update_state(state, body)
+            "resign"   -> Resign.update_state(state, body)
+            "undo"     -> Undo.update_state(state, body)
+            "spectate" -> Spectate.update_state(state, sender)
             _unrecognized_msg -> {:error, "unrecognized_msg_type"}
         end
         with {:ok, new_state} <- out do

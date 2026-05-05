@@ -28,19 +28,19 @@ defmodule DoMove do
     end
 
     defp preliminary_checks(game, req) do
-            both_players = [game.players.white, game.players.black]
-            fullmove_count = game.board.counters.fullmoves
-            player_color = Players.player_color(game.players, req.user)
-            piece_color = Squares.color(game.board.squares, req.from)
-            cond do
-                game.ending.winner != nil       -> { :error, "game finished"}
-                Clock.game_timed_out?(game)     -> { :error, "game timed out"}
-                req.user not in both_players    -> { :error, "forbidden: not a player" }
-                player_color != game.board.turn -> { :error, "forbidden: not your turn" }
-                piece_color != player_color     -> { :error, "forbidden: not your piece" }
-                req.count != fullmove_count     -> { :error, "corrupted: wrong move count" }
-                true                            -> { :ok, :noerrors }
-            end
+        both_players = [game.players.white, game.players.black]
+        fullmove_count = game.board.counters.fullmoves
+        player_color = Players.player_color(game.players, req.user)
+        piece_color = Squares.color(game.board.squares, req.from)
+        cond do
+            game.ending.winner != nil       -> { :error, "game finished"}
+            Clock.game_timed_out?(game)     -> { :error, "game timed out"}
+            req.user not in both_players    -> { :error, "forbidden: not a player" }
+            player_color != game.board.turn -> { :error, "forbidden: not your turn" }
+            piece_color != player_color     -> { :error, "forbidden: not your piece" }
+            req.count != fullmove_count     -> { :error, "corrupted: wrong move count" }
+            true                            -> { :ok, :noerrors }
+        end
     end
 
     defp apply_move(game, req) do

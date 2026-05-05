@@ -6,10 +6,10 @@ defmodule Spectate do
         :game
     ]
 
-    def update_state(state, _req, {sender_pid, _tag}),
-        do: update_state(state, nil, sender_pid)
+    def update_state(state, {sender_pid, _tag}),
+        do: update_state(state, sender_pid)
 
-    def update_state(state, _req, sender_pid) do
+    def update_state(state, sender_pid) do
         {:ok, update_in(state.players.spectators, fn set ->
             old = set || MapSet.new()
             expansion = MapSet.new([sender_pid])

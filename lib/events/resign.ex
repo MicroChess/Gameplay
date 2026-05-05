@@ -7,19 +7,37 @@ defmodule Resign do
         :count
     ]
 
-    def update_state(game, req, _sender),
-        do: update_state(game, req)
-
     def update_state(game, req) do
-        sender = Players.player_color(game.players, req.user)
-        { new_history, _fen } = History.register_communication(game.history, "resign", sender)
-        case Game.update_state(game, fn game -> update_ending(game, req) end) do
-            {:ok, game} -> {:ok, %{ game | history: new_history } }
+        case preliminary_checks(game) do
             {:error, reason} -> {:error, reason}
+            {:ok, :noerrors} -> {:ok, game
+                |> update_history(req)
+                |> update_pending()
+                |> update_ending(req)
+            }
         end
     end
 
-    def update_ending(game, req) do
+    defp preliminary_checks(game) do
+        cond do
+            game.ending.winner != nil   -> { :error, "game finished"  }
+            Clock.game_timed_out?(game) -> { :error, "game timed out" }
+            true                        -> { :ok,    :noerrors        }
+        end
+    end
+
+    defp update_history(game, req) do
+        sender = Players.player_color(game.players, req.user)
+        { new_history, _fen } = History.register_communication(game.history, "resign", sender)
+        %{ game | history: new_history }
+    end
+
+    defp update_pending(game) do
+        nopending = %{ offer_type: nil, requester: nil }
+        %{game | pending: nopending}
+    end
+
+    defp update_ending(game, req) do
         case Players.player_color(game.players, req.user) do
             :white -> {:ok, %{game | ending: %{ winner: :black, reason: :resign }}}
             :black -> {:ok, %{game | ending: %{ winner: :white, reason: :resign }}}
