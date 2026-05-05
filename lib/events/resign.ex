@@ -8,21 +8,14 @@ defmodule Resign do
     ]
 
     def update_state(game, req) do
-        case preliminary_checks(game) do
-            {:error, reason} -> {:error, reason}
-            {:ok, :noerrors} -> {:ok, game
+        cond do
+            game.ending.winner != nil   -> { :error, "game finished"  }
+            Clock.game_timed_out?(game) -> { :error, "game timed out" }
+            true ->  {:ok, game
                 |> update_history(req)
                 |> update_pending()
                 |> update_ending(req)
             }
-        end
-    end
-
-    defp preliminary_checks(game) do
-        cond do
-            game.ending.winner != nil   -> { :error, "game finished"  }
-            Clock.game_timed_out?(game) -> { :error, "game timed out" }
-            true                        -> { :ok,    :noerrors        }
         end
     end
 
