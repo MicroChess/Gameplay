@@ -8,14 +8,7 @@ defmodule Formatting do
             else: {:error, "Unrecognized item: #{item}"}
     end
 
-    def enforce(shapes, data, key) do
-        case Map.fetch(shapes, key) do
-            {:ok, shape} -> enforce(shape, data)
-            _ -> {:error, "Unrecognized shape: #{key}"}
-        end
-    end
-
-    defp enforce(shape, data) do
+    def enforce(shape, data) do
         atomic_data = atomize(shape, data)
         atomic_keys = atom_keys(shape)
         contained? = fn key ->
