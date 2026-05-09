@@ -56,7 +56,7 @@ defmodule Clock do
     end
 
     def milliseconds_on_the_clock(state, color),
-        do: Map.fetch!(state.clock.timers, color)
+        do: time_after_move(state, color, now_milliseconds())
 
     def time_after_move(state, color, now_timestamp) do
         millis_on_the_clock = Map.fetch!(state.clock.timers, color)
