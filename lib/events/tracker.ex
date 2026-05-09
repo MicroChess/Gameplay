@@ -16,10 +16,7 @@ defmodule Tracker do
 
     @impl GenServer
     def handle_info(:ping, %{game: game, ping: _old_ping}) do
-        color = Squares.opponent_color(game.board.turn)
-        new_clock = Clock.update_clock(game, color)
-        new_game = %{ game | clock: new_clock }
-        Spectate.notify_spectators(new_game)
+        Spectate.notify_spectators(game)
         if game.ending.winner == nil and !Clock.game_timed_out?(game) do
             milliseconds = Clock.milliseconds_on_the_clock(game, game.board.turn)
             new_ping = Process.send_after(self(), :ping, milliseconds)
