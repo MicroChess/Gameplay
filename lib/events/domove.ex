@@ -33,8 +33,8 @@ defmodule DoMove do
         player_color = Players.player_color(game.players, req.user)
         piece_color = Squares.color(game.board.squares, req.from)
         cond do
-            game.ending.winner != nil       -> { :error, "game finished"}
-            Clock.game_timed_out?(game)     -> { :error, "game timed out"}
+            game.ending.winner != nil       -> { :error, "game finished" }
+            Clock.game_timed_out?(game)     -> { :error, "game timed out" }
             req.user not in both_players    -> { :error, "forbidden: not a player" }
             player_color != game.board.turn -> { :error, "forbidden: not your turn" }
             piece_color != player_color     -> { :error, "forbidden: not your piece" }
@@ -67,7 +67,7 @@ defmodule DoMove do
         winning = %{winner: opponent, reason: :timeout}
         losing  = %{winner: color, reason: :checkmate}
         new_ending = cond do
-            Clock.player_timed_out?(game, color) -> winning
+            Clock.player_timed_out?(game, opponent) -> winning
             Squares.king_status(game.board, color) == :checkmate -> losing
             Squares.king_status(game.board, color) == :stalemate -> @stalemate
             true -> @noending
