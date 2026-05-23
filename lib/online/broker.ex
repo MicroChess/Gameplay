@@ -8,6 +8,7 @@ defmodule Broker do
         queue: "game_creation_events",
         on_success: :ack,
         on_failure: :reject,
+        declare: [ durable: true ],
         connection: connection
     }
 
