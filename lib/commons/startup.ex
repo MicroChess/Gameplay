@@ -36,6 +36,16 @@ defmodule Startup do
             {Mongo, [
                 url: System.get_env("MONGODB_URL", "mongodb://localhost:27017/games"),
                 name: :mongo
+            ]},
+            {Broker, [
+                dispatcher_concurrency: 10,
+                consumer_concurrency: 1,
+                connection: [
+                    host: System.get_env("RABBITMQ_HOST", "localhost"),
+                    port: String.to_integer(System.get_env("RABBITMQ_PORT", "5672")),
+                    username: System.get_env("RABBITMQ_USER", "guest"),
+                    password: System.get_env("RABBITMQ_PASS", "guest")
+                ]
             ]}
         ]
     end

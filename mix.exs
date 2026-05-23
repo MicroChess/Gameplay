@@ -17,6 +17,7 @@ defmodule Build do
                 {:jason, "~> 1.4"},
                 {:msgpax, "~> 2.3"},
                 {:mongodb_driver, "~> 1.5"},
+                {:broadway_rabbitmq, "~> 0.8"},
             ]
         ]
     end
