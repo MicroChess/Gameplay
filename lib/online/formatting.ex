@@ -1,41 +1,18 @@
 defmodule Formatting do
 
-    import String, only: [to_atom: 1]
-
-    def contains(list, item) do
-        if item in list,
-            do: {:ok, item},
-            else: {:error, "Unrecognized item: #{item}"}
+    def struct_to_map(data) do
+        cond do
+            is_struct(data) -> Map.from_struct(data) |> struct_to_map()
+            is_map(data) -> Map.new(data, fn {k, v} -> {k, struct_to_map(v)} end)
+            is_list(data) -> Enum.map(data, &struct_to_map/1)
+            true -> data
+        end
     end
 
     def enforce(shape, data) do
-        atomic_data = atomize(shape, data)
-        atomic_keys = atom_keys(shape)
-        contained? = fn key ->
-            Map.has_key?(atomic_data, key) and
-            not is_nil(Map.get(atomic_data, key))
-        end
-        case Enum.all?(atomic_keys, contained?) do
-            true  -> {:ok, atomic_data}
-            false -> {:error, "Invalid Datapack"}
-        end
-    end
-
-    defp atomize(module, data) do
-        keys = string_keys(module) ++ atom_keys(module)
-        filtered = Map.take(data, keys)
-        for {k, v} <- filtered, into: %{} do
-            {(if is_binary(k), do: to_atom(k), else: k), v}
-        end
-    end
-
-    defp string_keys(x),
-        do: atom_keys(x) |> Enum.map(&to_string/1)
-
-    defp atom_keys(module) do
-        struct(module, %{})
-        |> Map.keys()
-        |> Enum.filter(&(&1 != :__struct__))
+        keys = Map.keys(struct(shape)) -- [:__struct__]
+        string_keys = Enum.map(keys, &to_string/1)
+        Morphix.atomorphiform(data, string_keys)
     end
 
     def decode!(frame, :text),   do: Jason.decode!(frame)
