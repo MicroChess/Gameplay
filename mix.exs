@@ -18,6 +18,7 @@ defmodule Build do
                 {:msgpax, "~> 2.3"},
                 {:mongodb_driver, "~> 1.5"},
                 {:broadway_rabbitmq, "~> 0.8"},
+                {:testcontainers, "~> 1.12", only: [:test]}
             ]
         ]
     end

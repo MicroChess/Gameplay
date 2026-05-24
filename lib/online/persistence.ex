@@ -1,8 +1,10 @@
 defmodule Persinstence do
 
+    @mongodb_instance Application.compile_env(:microchess_gameplay, :mongo_conn, :mongo)
+
     def rehydrate(game_id) do
         selector = %{_id: game_id}
-        case Mongo.find_one(:mongo, "games", selector) do
+        case Mongo.find_one(@mongodb_instance, "games", selector) do
             nil -> {:error, "game not found"}
             obj -> Deserialization.decode_game_bison(obj)
         end
@@ -10,7 +12,7 @@ defmodule Persinstence do
 
     def insert(game_state) do
         obj = Serialization.encode_game_bison(game_state)
-        case Mongo.insert_one(:mongo, "games", obj) do
+        case Mongo.insert_one(@mongodb_instance, "games", obj) do
             {:ok, %{inserted_id: id}} -> {:ok, id}
             {:error, reason} -> {:error, reason}
         end
@@ -25,6 +27,6 @@ defmodule Persinstence do
     def sync(game_state, game_id) do
         obj = Serialization.encode_game_bison(game_state)
         selector = %{_id: game_id}
-        Mongo.replace_one(:mongo, "games", selector, obj)
+        Mongo.replace_one(@mongodb_instance, "games", selector, obj)
     end
 end

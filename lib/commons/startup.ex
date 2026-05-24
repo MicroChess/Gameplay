@@ -2,6 +2,10 @@ defmodule Startup do
 
     use Application
 
+    @mongodb_instance Application.compile_env(:microchess_gameplay, :mongo_conn, :mongo)
+    @cluster_strategy Application.compile_env(:microchess_gameplay, :cluster_strategy, Cluster.Strategy.Epmd)
+    @cluster_config   Application.compile_env(:microchess_gameplay, :cluster_config, [hosts: []])
+
     @impl Application
     def start(_type, _args) do
         Supervisor.start_link(children(), strategy: :one_for_one)
@@ -9,8 +13,11 @@ defmodule Startup do
 
     defp children do
         [
-            {Cluster.Supervisor, [
-                cluster(),
+            {Cluster.Supervisor, [[
+                main_cluster: [
+                    strategy: @cluster_strategy,
+                    config: @cluster_config
+                ]],
                 [name: :cluster_nodes_supervisor]
             ]},
             {Horde.Registry, [
@@ -35,7 +42,7 @@ defmodule Startup do
             ]},
             {Mongo, [
                 url: System.get_env("MONGODB_URL", "mongodb://localhost:27017/games"),
-                name: :mongo
+                name: @mongodb_instance
             ]},
             {Broker, [
                 dispatcher_concurrency: 10,
@@ -48,38 +55,5 @@ defmodule Startup do
                 ]
             ]}
         ]
-    end
-
-    defp cluster do
-        [
-            main_cluster: [
-                strategy: cluster_strategy(),
-                config: cluster_config()
-            ]
-        ]
-    end
-
-    defp cluster_strategy do
-        case System.get_env("strategy", "none") do
-            "none"  -> Cluster.Strategy.Epmd
-            "local" -> Cluster.Strategy.LocalEpmd
-            "kube"  -> Cluster.Strategy.Kubernetes.DNS
-            _ -> raise "Unknown clustering strategy"
-        end
-    end
-
-    defp cluster_config do
-        case System.get_env("strategy", "none") do
-            "none"  -> [ hosts: [] ]
-            "local" -> []
-            "kube"  ->
-                [
-                    service: "microchess-gameplay-hl",
-                    namespace: "microchess",
-                    application_name: "gameplay",
-                    polling_interval: 10_000
-                ]
-            _ -> raise "Unknown clustering strategy"
-        end
     end
 end
