@@ -1,4 +1,4 @@
-defmodule Persinstence do
+defmodule Persistence do
 
     @mongodb_instance Application.compile_env(:microchess_gameplay, :mongo_conn, :mongo)
 

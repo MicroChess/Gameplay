@@ -36,7 +36,7 @@ defmodule Broker do
             clock    = Clock.new(req.player_max_time, req.time_increment)
             players  = Players.new(req.white_player_id, req.black_player_id)
             game     = Game.new(clock, players, board)
-            {:ok, _} = Persinstence.insert(game)
+            {:ok, _} = Persistence.insert(game)
         rescue
             _ in RuntimeError -> {:error, "error creating the game"}
         end

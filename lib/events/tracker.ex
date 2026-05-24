@@ -8,7 +8,7 @@ defmodule Tracker do
 
     @impl GenServer
     def init(%{game_id: game_id}) do
-        game = Persinstence.rehydrate(game_id)
+        game = Persistence.rehydrate(game_id)
         milliseconds = Clock.milliseconds_on_the_clock(game, game.board.turn)
         ping = Process.send_after(self(), :ping, milliseconds)
         {:ok, %{ game: game, ping: ping }}
