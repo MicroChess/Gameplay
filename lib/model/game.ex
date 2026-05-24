@@ -15,11 +15,10 @@ defmodule Game do
         },
     ]
 
-    def new(clock, players, board),
-        do: %__MODULE__{
-            board: board,
-            clock: clock,
-            history: History.new(board),
-            players: players
-        }
+    def new(clock, players, board), do: %__MODULE__{
+        board: board,
+        clock: clock,
+        history: History.new(board),
+        players: players
+    }
 end
