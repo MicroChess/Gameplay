@@ -16,14 +16,18 @@ defmodule Encoding do
     def decode_fen(fen) do
         [squares, turn, rights, en_passant, half, full] = String.split(fen, " ")
         decoded_squares = decode_squares(squares)
+        counters_data = %{
+            halfmoves: String.to_integer(half),
+            fullmoves: String.to_integer(full)
+        }
         %Board{
             squares:             decoded_squares,
             castling_rights:     decode_castling_rights(rights),
-            counters:            %{halfmoves: String.to_integer(half), fullmoves: String.to_integer(full)},
             white_king_location: find_king_location(decoded_squares, :white),
             black_king_location: find_king_location(decoded_squares, :black),
             en_passant_target:   decode_en_passant_target(en_passant),
             turn:                decode_turn(turn),
+            counters:            counters_data,
         }
     end
 
