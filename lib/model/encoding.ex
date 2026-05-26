@@ -4,8 +4,6 @@ defmodule Encoding do
     @pieces %{"p" => :pawn, "r" => :rook, "n" => :knight, "b" => :bishop, "q" => :queen, "k" => :king}
     @letters Map.new(@pieces, fn {l, p} -> {p, String.upcase(l)} end)
 
-    #------------------------ FEN ------------------------#
-
     def encode_fen(board) do
         [encode_squares(board), encode_turn(board.turn), encode_castling_rights(board),
          encode_en_passant_target(board),
@@ -29,18 +27,22 @@ defmodule Encoding do
         }
     end
 
-    #--------------------- HELPERS ---------------------#
-
     defp encode_turn(:white), do: "w"
     defp encode_turn(:black), do: "b"
     defp decode_turn("w"), do: :white
     defp decode_turn("b"), do: :black
+
+    defp zero_castling_rights?(b),
+        do: b.castling_rights
+        |>  Map.values()
+        |>  Enum.any?()
 
     defp encode_castling_rights(b),
         do: (if b.castling_rights.white_rx, do: "K", else: "")
          <> (if b.castling_rights.white_lx, do: "Q", else: "")
          <> (if b.castling_rights.black_rx, do: "k", else: "")
          <> (if b.castling_rights.black_lx, do: "q", else: "")
+         <> (if zero_castling_rights?(b),   do: "-", else: "")
 
     defp decode_castling_rights(c), do: %{
         white_lx: String.contains?(c, "Q"), white_rx: String.contains?(c, "K"),
@@ -51,7 +53,7 @@ defmodule Encoding do
     defp decode_en_passant_target(<<f::binary-size(1), r::binary-size(1)>>),
         do: {String.to_atom(f), String.to_integer(r)}
 
-    defp encode_en_passant_target(%{en_passant_target: nil}),      do: "-"
+    defp encode_en_passant_target(%{en_passant_target: nil}), do: "-"
     defp encode_en_passant_target(%{en_passant_target: {file, rank}}), do: "#{file}#{rank}"
 
     defp find_king_location(squares, color) do
