@@ -2,7 +2,7 @@ defmodule History do
 
     @starting %{
         type: "starting",
-        fen: Serialization.encode_fen(%Board{})
+        fen: Encoding.encode_fen(%Board{})
     }
 
     defstruct [
@@ -12,7 +12,7 @@ defmodule History do
     def new(board), do: wrap([
         %{
             type: "starting",
-            fen: Serialization.encode_fen(board)
+            fen: Encoding.encode_fen(board)
         }
     ])
 
@@ -36,7 +36,7 @@ defmodule History do
     end
 
     def register_move(history, board) do
-        fen = Serialization.encode_fen(board)
+        fen = Encoding.encode_fen(board)
         move_entry = %{ type: "move", fen: fen, sent_by: board.turn }
         { wrap(history.entries ++ [move_entry]), fen }
     end

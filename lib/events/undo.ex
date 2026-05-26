@@ -24,7 +24,7 @@ defmodule Undo do
     def perform_undo(game, req) do
         sender = Players.player_color(game.players, req.user)
         { new_history, fen } = History.register_undo(game.history, sender)
-        board = Deserialization.decode_fen(fen)
+        board = Encoding.decode_fen(fen)
         %{ game | history: new_history, board: board, pending: @nopending }
     end
 
