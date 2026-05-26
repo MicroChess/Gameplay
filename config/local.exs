@@ -1,7 +1,7 @@
 import Config
 
 config :microchess_gameplay, mongo_conn:
-    :mongo_local
+    :mongo
 
 config :microchess_gameplay, cluster_strategy:
     Cluster.Strategy.Epmd
