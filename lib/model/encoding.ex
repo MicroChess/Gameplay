@@ -36,17 +36,17 @@ defmodule Encoding do
     defp decode_turn("w"), do: :white
     defp decode_turn("b"), do: :black
 
-    defp zero_castling_rights?(b),
+    defp some_castling_rights?(b),
         do: b.castling_rights
         |>  Map.values()
         |>  Enum.any?()
 
     defp encode_castling_rights(b),
-        do: (if b.castling_rights.white_rx, do: "K", else: "")
-         <> (if b.castling_rights.white_lx, do: "Q", else: "")
-         <> (if b.castling_rights.black_rx, do: "k", else: "")
-         <> (if b.castling_rights.black_lx, do: "q", else: "")
-         <> (if zero_castling_rights?(b),   do: "-", else: "")
+        do: (if b.castling_rights.white_rx,   do: "K", else: "")
+         <> (if b.castling_rights.white_lx,   do: "Q", else: "")
+         <> (if b.castling_rights.black_rx,   do: "k", else: "")
+         <> (if b.castling_rights.black_lx,   do: "q", else: "")
+         <> (if not some_castling_rights?(b), do: "-", else: "")
 
     defp decode_castling_rights(c), do: %{
         white_lx: String.contains?(c, "Q"), white_rx: String.contains?(c, "K"),

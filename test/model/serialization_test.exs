@@ -1,4 +1,4 @@
-defmodule Serialization.Test do
+defmodule Encoding.Test do
 
     use ExUnit.Case
 
