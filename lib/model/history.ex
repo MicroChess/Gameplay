@@ -23,7 +23,7 @@ defmodule History do
     end
 
     def register_undo(history, sent_by),
-        do: register_undo_helper(history.entries, sent_by)
+        do: register_undo_helper(history.entries, Atom.to_string(sent_by))
 
     defp register_undo_helper([%{ type: "move", fen: fen } | tail], sent_by) do
         undo_entry = %{ type: "undo", fen: fen, sent_by: sent_by }
@@ -31,7 +31,7 @@ defmodule History do
     end
 
     defp register_undo_helper([head | tail], sent_by) do
-        { remaining, fen } = register_undo(tail, sent_by)
+        { remaining, fen } = register_undo_helper(tail, sent_by)
         { wrap([head | remaining]), fen }
     end
 

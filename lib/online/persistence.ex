@@ -39,12 +39,6 @@ defmodule Persistence do
         end
     end
 
-    def sync(game_state) do
-        with {:ok, game_id} <- Map.fetch(game_state, :_id),
-            do: sync(game_state, game_id),
-            else: (_ -> {:error, "cannot sync a non persistent state"})
-    end
-
     def sync(game_state, game_id) do
         obj = encode_game_bison(game_state)
         selector = %{_id: game_id}

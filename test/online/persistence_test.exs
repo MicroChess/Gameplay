@@ -7,13 +7,39 @@ defmodule Persistence.Test do
         %Board{}
     )
 
+    @alice_first_move %DoMove{
+        user: "Alice",
+        count: 1,
+        from: {:e, 2},
+        to: {:e, 4},
+        promotion: nil
+    }
+
     test "insert a new game" do
         Persistence.insert(@alice_vs_bob_game)
     end
 
     test "insert a new game and retrieve it" do
-        {:ok, retrieve_id} = Persistence.insert(@alice_vs_bob_game)
-        retrieved_game = Persistence.rehydrate(retrieve_id)
+        {:ok, game_id} = Persistence.insert(@alice_vs_bob_game)
+        retrieved_game = Persistence.rehydrate(game_id)
         assert retrieved_game == @alice_vs_bob_game
+    end
+
+    test "insert a new game, retrieve it, sync it and retrieve it again (no history)" do
+        {:ok, game_id} = Persistence.insert(@alice_vs_bob_game)
+        retrieved_game = Persistence.rehydrate(game_id)
+        {:ok, updated_game} = DoMove.update_state(retrieved_game, @alice_first_move)
+        Persistence.sync(updated_game, game_id)
+        retrieved_updated_game = Persistence.rehydrate(game_id)
+        Map.delete(retrieved_updated_game, :history) == Map.delete(updated_game, :history)
+    end
+
+    test "insert a new game, retrieve it, sync it and retrieve it again (only history)" do
+        {:ok, game_id} = Persistence.insert(@alice_vs_bob_game)
+        retrieved_game = Persistence.rehydrate(game_id)
+        {:ok, updated_game} = DoMove.update_state(retrieved_game, @alice_first_move)
+        Persistence.sync(updated_game, game_id)
+        retrieved_updated_game = Persistence.rehydrate(game_id)
+        retrieved_updated_game.history == updated_game.history
     end
 end
