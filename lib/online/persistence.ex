@@ -12,12 +12,15 @@ defmodule Persistence do
     }
 
     def decode_game_bison(obj), do: %Game{
-        board:   Encoding.decode_fen(obj.board),
-        clock:   struct(Clock, obj.clock),
-        history: struct(History, obj.history),
-        players: Players.new(obj.players.white, obj.players.black),
-        ending:  obj.ending,
-        pending: obj.pending,
+        board:   Encoding.decode_fen(obj["board"]),
+        clock:   struct(Clock, Morphix.atomorphiform!(obj["clock"])),
+        history: struct(History, Morphix.atomorphiform!(obj["history"])),
+        ending:  Morphix.atomorphiform!(obj["ending"]),
+        pending: Morphix.atomorphiform!(obj["pending"]),
+        players: Players.new(
+            obj["players"]["white"],
+            obj["players"]["black"]
+        ),
     }
 
     def rehydrate(game_id) do
