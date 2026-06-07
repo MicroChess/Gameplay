@@ -31,7 +31,7 @@ defmodule Persistence.Test do
         {:ok, updated_game} = DoMove.update_state(retrieved_game, @alice_first_move)
         Persistence.sync(updated_game, game_id)
         retrieved_updated_game = Persistence.rehydrate(game_id)
-        Map.delete(retrieved_updated_game, :history) == Map.delete(updated_game, :history)
+        assert Map.delete(retrieved_updated_game, :history) == Map.delete(updated_game, :history)
     end
 
     test "insert a new game, retrieve it, sync it and retrieve it again (only history)" do
@@ -40,6 +40,6 @@ defmodule Persistence.Test do
         {:ok, updated_game} = DoMove.update_state(retrieved_game, @alice_first_move)
         Persistence.sync(updated_game, game_id)
         retrieved_updated_game = Persistence.rehydrate(game_id)
-        retrieved_updated_game.history == updated_game.history
+        assert retrieved_updated_game.history == updated_game.history
     end
 end

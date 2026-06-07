@@ -37,12 +37,12 @@ defmodule History do
 
     def register_move(history, board) do
         fen = Encoding.encode_fen(board)
-        move_entry = %{ type: "move", fen: fen, sent_by: board.turn }
-        { wrap(history.entries ++ [move_entry]), fen }
+        move_entry = %{ type: "move", fen: fen, sent_by: Atom.to_string(board.turn) }
+        { wrap([move_entry | history.entries]), fen }
     end
 
     def register_communication(history, msg_type, sent_by) do
-        communication_entry = %{ type: msg_type, sent_by: sent_by }
+        communication_entry = %{ type: msg_type, sent_by: Atom.to_string(sent_by) }
         { _, last_active_fen } = register_undo(history, sent_by)
         { wrap(history.entries ++ [communication_entry]), last_active_fen }
     end
