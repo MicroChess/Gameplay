@@ -1,49 +1,65 @@
 defmodule History do
 
-    @starting %{
-        type: "starting",
-        fen: Encoding.encode_fen(%Board{})
-    }
-
     defstruct [
-        entries: [ @starting ]
+        type:   "starting",
+        fen:     Encoding.encode_fen(%Board{}),
+        sender:  nil,
+        valid:   true,
+        prev:    nil,
     ]
 
-    def new(board), do: wrap([
-        %{
-            type: "starting",
-            fen: Encoding.encode_fen(board)
-        }
-    ])
+    def new(board), do: %History{
+        fen: Encoding.encode_fen(board)
+    }
 
-    def wrap(raw_history) do
-        %__MODULE__{
-            entries: raw_history
-        }
+    def register_move(history, board), do: %History{
+        type: "move",
+        fen: Encoding.encode_fen(board),
+        sender: Atom.to_string(Squares.opponent_color(board.turn)),
+        valid: true,
+        prev: history
+    }
+
+    def register_info(history, msg_type, sent_by), do: %History{
+        type: msg_type,
+        fen: history.fen,
+        sender: Atom.to_string(sent_by),
+        valid: true,
+        prev: history
+    }
+
+    def revoke_latest_move(%History{} = history) do
+        current_is_latest = history.type == "move" and history.valid == true
+        case current_is_latest do
+            true ->  %History{ history | valid: false }
+            false -> %History{ history | prev: revoke_latest_move(history.prev) }
+        end
     end
 
-    def register_undo(history, sent_by),
-        do: register_undo_helper(history.entries, Atom.to_string(sent_by))
-
-    defp register_undo_helper([%{ type: "move", fen: fen } | tail], sent_by) do
-        undo_entry = %{ type: "undo", fen: fen, sent_by: sent_by }
-        { wrap([undo_entry | tail]), fen }
+    def latest_fen(%History{} = history) do
+        current_is_latest = history.type == "move" and history.valid == true
+        case current_is_latest do
+            true ->  history.fen
+            false -> latest_fen(history.prev)
+        end
     end
 
-    defp register_undo_helper([head | tail], sent_by) do
-        { remaining, fen } = register_undo_helper(tail, sent_by)
-        { wrap([head | remaining]), fen }
+    def rollout(%History{prev: prev} = history) do
+        trimmed = Map.delete(history, :prev) |> Map.delete(:__struct__)
+        case prev do
+           nil -> [ trimmed ]
+           _   -> [ trimmed ] ++ rollout(prev)
+        end
     end
 
-    def register_move(history, board) do
-        fen = Encoding.encode_fen(board)
-        move_entry = %{ type: "move", fen: fen, sent_by: Atom.to_string(board.turn) }
-        { wrap([move_entry | history.entries]), fen }
-    end
-
-    def register_communication(history, msg_type, sent_by) do
-        communication_entry = %{ type: msg_type, sent_by: Atom.to_string(sent_by) }
-        { _, last_active_fen } = register_undo(history, sent_by)
-        { wrap(history.entries ++ [communication_entry]), last_active_fen }
-    end
+    def roll_in([ head | tail ]), do: %History{
+        type:   Map.get(head, "type")   || Map.get(head, :type),
+        fen:    Map.get(head, "fen")    || Map.get(head, :fen),
+        sender: Map.get(head, "sender") || Map.get(head, :sender),
+        valid:  Map.get(head, "valid")  || Map.get(head, :valid),
+        prev: case tail do
+            [] -> nil
+            _  -> roll_in(tail)
+        end
+    }
 end

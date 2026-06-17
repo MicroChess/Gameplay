@@ -23,16 +23,16 @@ defmodule Undo do
 
     def perform_undo(game, req) do
         sender = Players.player_color(game.players, req.user)
-        { new_history, fen } = History.register_undo(game.history, sender)
+        new_history = History.register_info(game.history, "undo", sender)
+        new_history = History.revoke_latest_move(new_history)
+        fen = History.latest_fen(new_history)
         board = Encoding.decode_fen(fen)
         %{ game | history: new_history, board: board, pending: @nopending }
     end
 
     def undo_req_ack(game, req) do
         undo_req_ack = %{ offer_type: :undo, requester: req.user }
-        { new_history, _fen } = History.register_communication(
-            game.history, "undo-proposal", req.user
-        )
+        new_history = History.register_info(game.history, "undo", req.user)
         %{ game | pending: undo_req_ack, history: new_history }
     end
 end

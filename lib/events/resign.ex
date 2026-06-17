@@ -21,7 +21,7 @@ defmodule Resign do
 
     defp update_history(game, req) do
         sender = Players.player_color(game.players, req.user)
-        { new_history, _fen } = History.register_communication(game.history, "resign", sender)
+        new_history = History.register_info(game.history, "resign", sender)
         %{ game | history: new_history }
     end
 

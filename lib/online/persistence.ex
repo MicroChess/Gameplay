@@ -6,7 +6,7 @@ defmodule Persistence do
         board:   Encoding.encode_fen(game_state.board),
         players: Map.from_struct(game_state.players),
         clock:   Map.from_struct(game_state.clock),
-        history: Map.from_struct(game_state.history),
+        history: History.rollout(game_state.history),
         ending:  game_state.ending,
         pending: game_state.pending,
     }
@@ -14,7 +14,7 @@ defmodule Persistence do
     def decode_game_bison(obj), do: %Game{
         board:   Encoding.decode_fen(obj["board"]),
         clock:   struct(Clock, Morphix.atomorphiform!(obj["clock"])),
-        history: struct(History, Morphix.atomorphiform!(obj["history"])),
+        history: History.roll_in(obj["history"]),
         ending:  Morphix.atomorphiform!(obj["ending"]),
         pending: Morphix.atomorphiform!(obj["pending"]),
         players: Players.new(

@@ -49,7 +49,7 @@ defmodule DoMove do
     end
 
     defp update_history(game) do
-        {new_history, _fen} = History.register_move(game.history, game.board)
+        new_history = History.register_move(game.history, game.board)
         %{game | history: new_history}
     end
 
