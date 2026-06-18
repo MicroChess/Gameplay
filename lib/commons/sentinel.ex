@@ -56,5 +56,5 @@ defmodule Sentinel do
         do: GenServer.call(sentinel_pid, :sentinel_plain_describe)
 
     def clear_messages(sentinel_pid),
-        do: GenServer.cast(sentinel_pid, :sentinel_clear_messages)
+        do: GenServer.call(sentinel_pid, :sentinel_clear_messages)
 end

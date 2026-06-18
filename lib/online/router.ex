@@ -10,17 +10,17 @@ defmodule Router do
 
     get "/v1/gameplay/join" do
         conn = Conn.fetch_query_params(conn)
-        user_id_header = Conn.get_req_header(conn, "X-User-ID")
+        user_id_header = Conn.get_req_header(conn, "x-user-id")
         target_game_parameter = conn.params["game-id"]
         case {user_id_header, target_game_parameter} do
-            {[user_id], [target_game]} -> upgrade_to_socket(
+            {[user_id], target_game} when not is_nil(target_game) -> upgrade_to_socket(
                 conn, Socket, %{
                     user: user_id,
                     game: target_game
                 }
             )
-            {[], _target_game} -> unauthorized(conn)
-            _bad_request -> bad_request(conn)
+            {[], _} -> unauthorized(conn)
+            _ -> bad_request(conn)
         end
     end
 

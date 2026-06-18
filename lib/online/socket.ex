@@ -25,7 +25,7 @@ defmodule Socket do
     @impl WebSock
     def handle_in({message, [opcode: protocol]}, state) do
         with {:ok, decoded}   <- Formatting.decode(message, protocol),
-             {:ok, extended}  <- Map.merge(decoded, state),
+             {:ok, extended}  <- {:ok, Map.merge(decoded, state)},
              {:ok, msg_type}  <- Map.fetch(extended, "type"),
              {:ok, msg_shape} <- Map.fetch(@shapes, msg_type),
              {:ok, msg_body}  <- Map.fetch(extended, "body"),
@@ -42,18 +42,17 @@ defmodule Socket do
     end
 
     defp summon_tracker_and_delegate(state, datapack) do
-        label = %{ game: Map.get(state, :game) }
-        settings = {Tracker, :start_link, label}
+        label = %{ game_id: Map.get(state, :game) }
+        settings = {Tracker, :start_link, [label]}
         outcome = Horde.DynamicSupervisor.start_child(
             :cluster_processes_supervisor,
             %{ id: label, restart: :transient, start: settings}
         )
-        pid = case outcome do
-            {:ok, pid} -> pid
-            {:error, {:already_started, pid}} -> pid
-            _ -> summon_tracker_and_delegate(state, datapack)
+        case outcome do
+            {:ok, pid} -> GenServer.call(pid, datapack)
+            {:error, {:already_started, pid}} -> GenServer.call(pid, datapack)
+            _ -> {:error, :supervisor_unavailable}
         end
-        GenServer.call(pid, datapack)
     end
 
     @impl WebSock
