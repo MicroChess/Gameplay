@@ -48,11 +48,12 @@ defmodule Socket do
             :cluster_processes_supervisor,
             %{ id: label, restart: :transient, start: settings}
         )
-        case outcome do
-            {:ok, pid} -> GenServer.call(pid, datapack)
-            {:error, {:already_started, pid}} -> GenServer.call(pid, datapack)
-            _ -> {:error, :supervisor_unavailable}
+        pid = case outcome do
+            {:ok, pid} -> pid
+            {:error, {:already_started, pid}} -> pid
+            _ -> summon_tracker_and_delegate(state, datapack)
         end
+        GenServer.call(pid, datapack)
     end
 
     @impl WebSock
