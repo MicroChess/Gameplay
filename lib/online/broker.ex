@@ -32,9 +32,9 @@ defmodule Broker do
 
     def process(%{"type" => "game_creation", "body" => req}) do
         try do
-            board    = Encoding.decode_fen(req.start_board_fen)
-            clock    = Clock.new(req.player_max_time, req.time_increment)
-            players  = Players.new(req.white_player_id, req.black_player_id)
+            board    = Encoding.decode_fen(req["start_board_fen"])
+            clock    = Clock.new(req["player_max_time"], req["time_increment"])
+            players  = Players.new(req["white_player_id"], req["black_player_id"])
             game     = Game.new(clock, players, board)
             {:ok, _} = Persistence.insert(game)
         rescue

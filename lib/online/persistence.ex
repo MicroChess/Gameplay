@@ -39,6 +39,9 @@ defmodule Persistence do
         end
     end
 
+    def try_sync(_game_state, nil), do: {:ok, nil}
+    def try_sync(game_state, game_id), do: sync(game_state, game_id)
+
     def sync(game_state, game_id) do
         obj = encode_game_bison(game_state)
         selector = %{_id: game_id}

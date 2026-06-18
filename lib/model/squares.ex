@@ -38,6 +38,7 @@ defmodule Squares do
     def opponent_color(:black), do: :white
     def both_colors(b, p1, p2), do: {color(b, p1), color(b, p2)}
 
+    def horizontal_signed_distance({sf, _}, {df, _}), do: intify(sf) - intify(df)
     def horizontal_distance({sf, _}, {df, _}), do: abs(intify(sf) - intify(df))
     def vertical_distance({_, sr}, {_, dr}), do: abs(sr - dr)
     def empty?(board, pos), do: color(board, pos) == nil

@@ -1,21 +1,24 @@
 defmodule PawnMoves do
 
-    def promote!(board, from, to, promotion \\ :pawn),
-        do: apply_move!(board, from, to)
-        |>  Map.put(to, {promotion, Squares.color(board, to)})
+    def promote!(board, from, to, promotion \\ :pawn) do
+        color = Squares.color(board.squares, from)
+        moved = apply_move!(board, from, to)
+        %{moved | squares: Map.put(moved.squares, to, {promotion, color})}
+    end
 
     def apply_move!(board, from, to),
-        do: capture_en_passant_target(board, to)
+        do: capture_en_passant_target(board, from, to)
         |>  BoardUpdates.update_en_passant_target(from, to)
         |>  BoardUpdates.update_fullmoves_counter(from, to)
         |>  BoardUpdates.update_halfmoves_counter(from, to)
         |>  BoardUpdates.update_current_turn()
         |>  BoardUpdates.update_squares_after_move(from, to)
 
-    defp capture_en_passant_target(board, to) do
-        target = Squares.shift(board, to, {0, 1})
+    defp capture_en_passant_target(board, from, to) do
+        horizontal_shift = Squares.horizontal_signed_distance(from, to)
+        dead_pawn_square = Squares.shift(board, from, {horizontal_shift, 0})
         case board.en_passant_target == to do
-            true -> %{ board | squares: Map.put(board.squares, target, nil) }
+            true -> %{ board | squares: Map.put(board.squares, dead_pawn_square, nil) }
             false -> board
         end
     end

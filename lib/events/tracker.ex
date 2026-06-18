@@ -3,24 +3,32 @@ defmodule Tracker do
     use GenServer
 
     @impl GenServer
-    def init(%{raw: game}),
-        do: {:ok, %{ game: game, ping: Process.send_after(self(), :ping, 0) }}
+    def init(%{raw: game}), do: {:ok, %{
+        game: game,
+        ping: Process.send_after(self(), :ping, 0),
+        game_id: nil
+    }}
 
     @impl GenServer
-    def init(%{game_id: game_id}) do
-        game = Persistence.rehydrate(game_id)
-        milliseconds = Clock.milliseconds_on_the_clock(game, game.board.turn)
-        ping = Process.send_after(self(), :ping, milliseconds)
-        {:ok, %{ game: game, ping: ping }}
+    def init(%{ game_id: game_id }) do
+        with {:ok, game} <- Persistence.rehydrate(game_id) do
+            milliseconds = Clock.milliseconds_on_the_clock(game, game.board.turn)
+            ping = Process.send_after(self(), :ping, milliseconds)
+            {:ok, %{ game: game, ping: ping, game_id: game_id }}
+        else
+            {:error, reason} -> {:stop, reason}
+        end
     end
 
     @impl GenServer
-    def handle_info(:ping, %{game: game, ping: _old_ping}) do
+    def handle_info(:ping, %{game: game, ping: _old_ping} = state) do
         Spectate.notify_spectators(game)
         if game.ending.winner == nil and !Clock.game_timed_out?(game) do
             milliseconds = Clock.milliseconds_on_the_clock(game, game.board.turn)
             new_ping = Process.send_after(self(), :ping, milliseconds)
-            {:noreply, %{ game: game, ping: new_ping }}
+            {:noreply, %{state | ping: new_ping}}
+        else
+            {:noreply, %{state | ping: nil}}
         end
     end
 
@@ -36,7 +44,8 @@ defmodule Tracker do
         end
         with {:ok, game} <- out do
             Process.cancel_timer(state.ping)
-            new_state = %{game: game, ping: state.ping}
+            Persistence.try_sync(game, state.game_id)
+            new_state = %{state | game: game}
             handle_info(:ping, new_state)
             {:reply, :ok, new_state}
         else
