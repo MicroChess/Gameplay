@@ -19,8 +19,8 @@ defmodule Router do
                     game: target_game
                 }
             )
-            {[], _} -> unauthorized(conn)
-            _ -> bad_request(conn)
+            {[], _target_game} -> unauthorized(conn)
+            _bad_request -> bad_request(conn)
         end
     end
 
