@@ -1,0 +1,54 @@
+services:
+
+    mongo:
+        image: mongo:7
+        ports:
+            - "11011:27017"
+        healthcheck:
+            test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping').ok"]
+            interval: 5s
+            timeout: 5s
+            retries: 10
+
+    rabbitmq:
+        image: rabbitmq:3-alpine
+        ports:
+            - "11013:5672"
+        healthcheck:
+            test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+            interval: 5s
+            timeout: 10s
+            retries: 12
+
+    gameplay-test:
+        image: elixir:1.19-otp-26-alpine
+        working_dir: /app
+        volumes:
+            - ..:/app
+            - gameplay_test_deps:/app/deps
+            - gameplay_test_build:/app/_build
+        tty: true
+        command: >
+            sh -c "apk add --no-cache build-base &&
+                   mix local.hex --force &&
+                   mix local.rebar --force &&
+                   mix deps.get &&
+                   mix test.nosandbox"
+        depends_on:
+            mongo:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+        environment:
+            MIX_ENV: test
+            MONGODB_URL: mongodb://mongo:27017/games_test
+            RABBITMQ_HOST: rabbitmq
+            RABBITMQ_PORT: "5672"
+            RABBITMQ_USER: guest
+            RABBITMQ_PASS: guest
+
+volumes:
+    gameplay_run_deps:
+    gameplay_run_build:
+    gameplay_test_deps:
+    gameplay_test_build:
