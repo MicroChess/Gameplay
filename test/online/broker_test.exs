@@ -15,21 +15,29 @@ defmodule Broker.Test do
         }
     }
 
-    @valid_payload Jason.encode!(%{
-        "type" => "game_creation",
-        "body" => %{
-            "start_board_fen"  => "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-            "player_max_time"  => 10,
-            "time_increment"   => 5,
-            "white_player_id"  => "alice",
-            "black_player_id"  => "bob"
-        }
-    })
-
     @unknown_event %{
         "type" => "unknown_event",
         "body" => %{}
     }
+
+    @valid_payload Jason.encode!(
+        @valid_event
+    )
+
+    setup_all do
+        host = System.get_env("RABBITMQ_HOST", "localhost")
+        port = String.to_integer(System.get_env("RABBITMQ_PORT", "5672"))
+        user = System.get_env("RABBITMQ_USER", "guest")
+        pass = System.get_env("RABBITMQ_PASS", "guest")
+
+        {:ok, amqp_conn} = AMQP.Connection.open(host: host, port: port, username: user, password: pass)
+        {:ok, channel}   = AMQP.Channel.open(amqp_conn)
+        AMQP.Queue.declare(channel, "game_creation_events", durable: true)
+
+        on_exit(fn -> AMQP.Connection.close(amqp_conn) end)
+
+        {:ok, channel: channel}
+    end
 
     test "process/1 inserts a new game and returns {:ok, game_id}" do
         assert {:ok, _game_id} = Broker.process(@valid_event)
@@ -58,21 +66,6 @@ defmodule Broker.Test do
         {:ok, game_id} = Broker.process(@valid_event)
         game = Persistence.rehydrate(game_id)
         assert game.ending.winner == nil
-    end
-
-    setup_all do
-        host = System.get_env("RABBITMQ_HOST", "localhost")
-        port = String.to_integer(System.get_env("RABBITMQ_PORT", "5672"))
-        user = System.get_env("RABBITMQ_USER", "guest")
-        pass = System.get_env("RABBITMQ_PASS", "guest")
-
-        {:ok, amqp_conn} = AMQP.Connection.open(host: host, port: port, username: user, password: pass)
-        {:ok, channel}   = AMQP.Channel.open(amqp_conn)
-        AMQP.Queue.declare(channel, "game_creation_events", durable: true)
-
-        on_exit(fn -> AMQP.Connection.close(amqp_conn) end)
-
-        {:ok, channel: channel}
     end
 
     test "Broadway pipeline processes a game_creation message end-to-end", %{channel: channel} do
