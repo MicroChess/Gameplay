@@ -46,12 +46,12 @@ defmodule Startup do
         {Broker, [
             dispatcher_concurrency: 10,
             consumer_concurrency: 1,
-            connection: [
+            connection: Application.get_env(:microchess_gameplay, :rabbitmq_connection, [
                 host: System.get_env("RABBITMQ_HOST", "localhost"),
                 port: String.to_integer(System.get_env("RABBITMQ_PORT", "5672")),
                 username: System.get_env("RABBITMQ_USER", "guest"),
                 password: System.get_env("RABBITMQ_PASS", "guest")
-            ]
+            ])
         ]}
     ]
 end
