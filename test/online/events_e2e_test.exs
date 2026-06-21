@@ -23,13 +23,10 @@ defmodule Events.E2E.Test do
         port = String.to_integer(System.get_env("RABBITMQ_PORT", "5672"))
         user = System.get_env("RABBITMQ_USER", "guest")
         pass = System.get_env("RABBITMQ_PASS", "guest")
-
         {:ok, amqp_conn} = AMQP.Connection.open(host: host, port: port, username: user, password: pass)
         {:ok, channel}   = AMQP.Channel.open(amqp_conn)
         AMQP.Queue.declare(channel, "game_creation_events", durable: true)
-
         on_exit(fn -> AMQP.Connection.close(amqp_conn) end)
-
         {:ok, channel: channel}
     end
 
