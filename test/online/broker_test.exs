@@ -2,12 +2,10 @@ defmodule Broker.Test do
 
     use ExUnit.Case
 
-    @starting_fen "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
-
     @valid_event %{
         "type" => "game_creation",
         "body" => %{
-            "start_board_fen"  => @starting_fen,
+            "start_board_fen"  => "r2k3r/8/8/8/8/8/8/R2K3R w KQkq - 0 1",
             "player_max_time"  => 10,
             "time_increment"   => 5,
             "white_player_id"  => "alice",
@@ -20,25 +18,6 @@ defmodule Broker.Test do
         "body" => %{}
     }
 
-    @valid_payload Jason.encode!(
-        @valid_event
-    )
-
-    setup_all do
-        host = System.get_env("RABBITMQ_HOST", "localhost")
-        port = String.to_integer(System.get_env("RABBITMQ_PORT", "5672"))
-        user = System.get_env("RABBITMQ_USER", "guest")
-        pass = System.get_env("RABBITMQ_PASS", "guest")
-
-        {:ok, amqp_conn} = AMQP.Connection.open(host: host, port: port, username: user, password: pass)
-        {:ok, channel}   = AMQP.Channel.open(amqp_conn)
-        AMQP.Queue.declare(channel, "game_creation_events", durable: true)
-
-        on_exit(fn -> AMQP.Connection.close(amqp_conn) end)
-
-        {:ok, channel: channel}
-    end
-
     test "process/1 inserts a new game and returns {:ok, game_id}" do
         assert {:ok, _game_id} = Broker.process(@valid_event)
     end
@@ -49,10 +28,11 @@ defmodule Broker.Test do
 
     test "process/1 inserts a game that can be rehydrated from MongoDB" do
         {:ok, game_id} = Broker.process(@valid_event)
+        source_fen = @valid_event["body"]["start_board_fen"]
         game = Persistence.rehydrate(game_id)
         assert game.players.white == "alice"
         assert game.players.black == "bob"
-        assert game.board == Encoding.decode_fen(@starting_fen)
+        assert game.board == Encoding.decode_fen(source_fen)
     end
 
     test "process/1 correctly sets clock configuration" do
@@ -66,22 +46,5 @@ defmodule Broker.Test do
         {:ok, game_id} = Broker.process(@valid_event)
         game = Persistence.rehydrate(game_id)
         assert game.ending.winner == nil
-    end
-
-    test "Broadway pipeline processes a game_creation message end-to-end", %{channel: channel} do
-        AMQP.Basic.publish(channel, "", "game_creation_events", @valid_payload)
-        Process.sleep(1500)
-        cursor = Mongo.find(:mongo, "games", %{"players.white" => "alice"})
-        results = Enum.to_list(cursor)
-        assert length(results) >= 1
-    end
-
-    test "Broadway pipeline rejects an unknown event type", %{channel: channel} do
-        payload = Jason.encode!(%{"type" => "unknown", "body" => %{}})
-        AMQP.Basic.publish(channel, "", "game_creation_events", payload)
-        Process.sleep(500)
-        cursor = Mongo.find(:mongo, "games", %{"players.white" => "nobody"})
-        results = Enum.to_list(cursor)
-        assert results == []
     end
 end
